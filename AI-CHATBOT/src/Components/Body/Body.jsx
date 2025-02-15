@@ -2,12 +2,14 @@ import { useState } from "react";
 import axios from 'axios';
 import './Body.css'
 import { FaPaperPlane, FaMicrophone } from "react-icons/fa";
+import SpeechRecognition, { useSpeechRecognition} from 'react-speech-recognition';
+// import { SpeechSynthesisUtterance } from "react-speech-kit"
 
 const Body = () => {
-
+    
   const [message, setMessage] = useState("");
   const [talk, setTalk] = useState([])
-
+  
   const sendMessage = async () => {
     console.log("Loading...")
     try {
@@ -21,7 +23,8 @@ const Body = () => {
           }]
         },
       })
-      const data = response?.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received";
+     const data = response?.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received";
+          
       if (message.trim() && data.trim()) {
         setMessage("");
         setTalk([...talk, {
@@ -35,24 +38,47 @@ const Body = () => {
       console.error("Request timed out or failed:", error);
     }
   };
-  
-  async function sendVoice() {
-    
 
+  const [isFirstFunction, setIsFirstFunction] = useState(true);
+  const startListening = () => SpeechRecognition.startListening({ continuous: true })
+  const stopListening = () => SpeechRecognition.stopListening()
+  const { transcript, browserSupportsSpeechRecognition,resetTranscript } = useSpeechRecognition()
+  
+  const sendVoice = async ()=> { 
+    if (isFirstFunction) {
+      console.log('start');
+      resetTranscript()
+      startListening()
+      
+    } else {
+      console.log('stop');
+      stopListening()
+      setMessage(transcript)
+    }
+    setIsFirstFunction(!isFirstFunction);
   }
+  
+  const speakText = (msg) => {
+    const utterance = new SpeechSynthesisUtterance(msg);
+    speechSynthesis.speak(utterance);
+  };
+
   return (
     <div className="chatbot-container">
       <div className="chatbox">
         <div className="messages">
           {talk.map((data, index) => (
             <div key={`${index}`}>
-              <div className="message user">{data.msg}</div>
-              <div className="message user">{data.ans}</div>
+              <div className="message user"><pre>{data.msg}</pre></div>
+              <div className="message user">
+                <pre>{data.ans}</pre>
+                <button className="voice-btn" onClick={()=>speakText(data.ans)} >
+                  <FaMicrophone />
+                  </button>
+                </div>
             </div>
           ))}
         </div>
-
-
 
         {/* Input & Buttons */}
         <div className="input-box">

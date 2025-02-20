@@ -1,0 +1,134 @@
+/* Chatbot Container */
+.chatbot-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f2f2f2;
+  }
+  
+  /* Chatbox */
+  .chatbox {
+    width:750px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  /* Messages Area (Scrollable) */
+  .messages {
+    height: 300px;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Message Style */
+  .message {
+    background: #0084ff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    align-self: flex-end;
+    max-width: 70%;
+    word-wrap: break-word;
+  }
+  
+  /* Input Box */
+  .input-box {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: #f9f9f9;
+  }
+  
+  /* Input Field */
+  .input-box input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  /* Buttons */
+  .send-btn, .voice-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 10px;
+    color: #0084ff;
+  }
+  
+  .voice-btn {
+    color: rgb(0, 0, 0);
+  }
+  
+  /* Button Styles */
+.open-btn {
+  padding: 10px 20px;
+  background-color: rgb(1, 1, 1);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  position: fixed;
+  top: 80px;  /* Distance from the top */
+  left: 10px; /* Distance from the left */
+}
+
+/* Drawer Styles */
+.drawer {
+  position: fixed;
+  top: 60px;
+  left: -350px; /* Hidden by default */
+  width: 250px;
+  height: 100%;
+  background-color: #000000;
+  color: white;
+  padding: 20px;
+  transition: left 0.3s ease-in-out;
+}
+
+/* Open State */
+.drawer.open {
+  left: 0;
+}
+
+/* Close Button */
+.close-btn {
+  background: red;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  float: right;
+}
+
+/* List Styles */
+.drawer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.drawer ul li {
+  padding: 10px 0;
+  border-bottom: 1px solid gray;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+

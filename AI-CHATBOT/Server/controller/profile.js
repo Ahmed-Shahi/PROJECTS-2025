@@ -21,6 +21,12 @@ async function handlecreateChat(req,res) {
 
 }
 
+async function handleGetChat(req,res) {
+    const query = await Chats.find({})
+    return res.json(query)
+}
+
 module.exports = {
-    handlecreateChat
+    handlecreateChat,
+    handleGetChat
 }

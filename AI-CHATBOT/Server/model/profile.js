@@ -8,11 +8,11 @@ const chatSchema = new mongoose.Schema({
       chats: [
         {
           question: {
-            type: String,
+            type: [String],
             required: true
           },
           answer: {
-            type: String,
+            type: [String],
             required: true
           }
         }

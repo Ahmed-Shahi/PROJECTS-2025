@@ -15,6 +15,7 @@ const Body = () => {
       const response = await axios({
         url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBgyVfrkvJv-Jnqm7iSzkxStZImn20awq8",
         method: "post",
+        mode: "cors",
         timeout: 10000,
         data: {
           "contents": [{
@@ -87,16 +88,12 @@ const Body = () => {
       return d
     })
 
-    //Storing the Chats in Server 
-    const response = await fetch('http://localhost:5000/api/Profile', {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: localStorage.getItem("userId"),
-        question: Msg,
-        answer: Ans
-      }),
-    })
+    //Storing the Chats in Server
+    const response = await axios.post("http://localhost:5000/api/Profile", {
+      userId: localStorage.getItem("userId"),
+      question: Msg,
+      answer: Ans,
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to store chat. Status: ${response.status}`);
@@ -104,21 +101,34 @@ const Body = () => {
     
     console.log('Done!!');
     
-    await fetch('http://localhost:5000/api/Profile')
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.chats && data.chats.length > 0 && data.userId === localStorage.getItem('userId')) {
-          const firstQuestion = data.chats[0].question[0];
-          setChatList(firstQuestion)
-          console.log(chatList);
-        } else {
-          console.log("No chats found");
-        }
-
-      })
-      .catch(error => console.error('Error fetching data:', error));
   }
-
+  
+  const listChat = async () => {
+    console.log(talk);
+    
+    const response = await axios.get("http://localhost:5000/api/Profile");
+    if (response.data[0].chats[0].question[0] && response.data[0].userId === localStorage.getItem('userId')) {
+      const firstQuestion = await response.data[0].chats[0].question[0];
+      setChatList(firstQuestion);
+      console.log(chatList);
+    } else {
+      console.log("No chats found");}
+    }
+    
+    const preChat = async () => {
+    const userId = localStorage.getItem('userId')
+    const response = await axios.get("http://localhost:5000/api/Profile");
+       if(response.data[0].userId === userId){
+        
+        const allQuestions = response.data[0].chats.flatMap(chat => chat.question);
+        const allAnswer = response.data[0].chats.flatMap(chat => chat.answer);
+        console.log(allQuestions);
+        console.log(allAnswer);
+        
+        
+       }
+        
+  }
   return (
     <div className="chatbot-container">
       <div className="slidebtn" >
@@ -149,7 +159,16 @@ const Body = () => {
           SAVE CHAT
         </button>
       </div>
-
+      <div>
+        <button onClick={() => listChat()} >
+          List CHAT
+        </button>
+      </div>
+      <div>
+        <button onClick={() => preChat()} >
+          Previous CHAT
+        </button>
+      </div>
 
       <div className="chatbot-container">
         <div className="chatbox">

@@ -22,8 +22,15 @@ async function handlecreateChat(req,res) {
 }
 
 async function handleGetChat(req,res) {
-    const query = await Chats.find({})
-    return res.json(query)
+ try {
+    // body = req.body.id
+    // console.log(body);
+     const query = await Chats.find({})
+     return res.json(query)
+    
+ } catch (error) {
+    res.status(500).json({msg:'Server Error'})
+ }
 }
 
 module.exports = {

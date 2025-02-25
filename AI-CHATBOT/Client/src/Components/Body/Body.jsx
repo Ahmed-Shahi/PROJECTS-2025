@@ -81,13 +81,17 @@ const Body = () => {
     console.log(mergedObject);
 
     // Getting Values from Converted data to Store in the body of Server
-    const Ans = mergedObject.ans.map((d, i) => {
+    const Ans = mergedObject.ans.map((d) => {
       return d
     })
-    const Msg = mergedObject.msg.map((d, i) => {
+    const Msg = mergedObject.msg.map((d) => {
       return d
     })
 
+    const getUser = await axios.get("http://localhost:5000/api/Profile");
+    if (!getUser.data[0].userId) {
+
+    }
     //Storing the Chats in Server
     const response = await axios.post("http://localhost:5000/api/Profile", {
       userId: localStorage.getItem("userId"),
@@ -95,42 +99,70 @@ const Body = () => {
       answer: Ans,
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to store chat. Status: ${response.status}`);
-    }
-    
-    console.log('Done!!');
-    
+
+
   }
-  
+
   const listChat = async () => {
     console.log(talk);
-    
+
     const response = await axios.get("http://localhost:5000/api/Profile");
     if (response.data[0].chats[0].question[0] && response.data[0].userId === localStorage.getItem('userId')) {
       const firstQuestion = await response.data[0].chats[0].question[0];
       setChatList(firstQuestion);
       console.log(chatList);
     } else {
-      console.log("No chats found");}
+      console.log("No chats found");
     }
-    
-    const preChat = async () => {
+  }
+
+  const [previousChat, setPreviousChat] = useState([])
+  const preChat = async () => {
     const userId = localStorage.getItem('userId')
     const response = await axios.get("http://localhost:5000/api/Profile");
-       if(response.data[0].userId === userId){
-        
-        const allQuestions = response.data[0].chats.flatMap(chat => chat.question);
-        const allAnswer = response.data[0].chats.flatMap(chat => chat.answer);
-        console.log(allQuestions);
-        console.log(allAnswer);
-        
-        
-       }
-        
+    // Check the User has the history or not 
+    if (await response.data[0].userId === userId) {
+      
+      // Collecting Data from history
+      const allQuestions = await response.data[0].chats.flatMap(chat => chat.question);
+      const allAnswer = await response.data[0].chats.flatMap(chat => chat.answer);
+
+      setPreviousChat([{
+        answer: allAnswer,
+        question:allQuestions
+      }])
+
+      const mergedObject = previousChat.reduce((acc, data) => {
+        acc.msg.push(data.question);
+        acc.ans.push(data.answer);
+        return acc;
+      }, { msg: [], ans: [] });
+     
+      // Getting Values from the Converted data to Store in the talk state
+      const Ans = mergedObject.ans.map((d) => {
+        return d
+      })
+      const Msg = mergedObject.msg.map((d) => {
+        return d
+      })
+     
+      // Make simple array 
+      let newTalk =  [];
+      for (let i = 0; i < Msg[0].length; i++) { 
+        newTalk.push({
+          msg: Msg[0][i],
+          ans: Ans[0][i]
+        });
+      }
+      // Set the talk state, Now the history data is show on the Chats  
+      setTalk([...talk, ...newTalk]);
+
+    }
+
   }
   return (
     <div className="chatbot-container">
+      <div className="button-container">
       <div className="slidebtn" >
         {/* Button to Open Drawer */}
         <button onClick={() => setIsOpen(true)} className="open-btn">
@@ -154,28 +186,38 @@ const Body = () => {
         </div>
 
       </div>
-      <div>
-        <button onClick={() => saveChat()} >
+      <div >
+        <button onClick={() => saveChat()} className="save-btn">
           SAVE CHAT
         </button>
       </div>
       <div>
-        <button onClick={() => listChat()} >
-          List CHAT
+        <button onClick={() => listChat()} className="list-btn" >
+          LIST CHAT
         </button>
       </div>
       <div>
-        <button onClick={() => preChat()} >
-          Previous CHAT
+        <button onClick={() => preChat()} className="pre-btn">
+          CHAT HISTORY        
         </button>
+      </div>
       </div>
 
       <div className="chatbot-container">
         <div className="chatbox">
           <div className="messages">
+
             {talk.map((data, index) => (
               <div key={`${index}`}>
-                <div className="message user"><pre>{data.msg}</pre></div>
+                <div>
+                  <p className="tag">YOU</p>
+                </div>
+                <div className="message user">
+                  <pre>{data.msg}</pre>
+                </div>
+                <div>
+                  <p className="tag">AI</p>
+                </div>
                 <div className="message user">
                   <pre>{data.ans}</pre>
                   <button className="voice-btn" onClick={() => speakText(data.ans)} >

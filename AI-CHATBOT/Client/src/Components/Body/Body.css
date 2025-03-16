@@ -1,11 +1,33 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Prevents unwanted scrolling */
+}
 /* Chatbot Container */
 .chatbot-container {
+  
+
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f2f2f2;
+  height: 120vh;
+  width: 100vw; /* Ensures full screen coverage */
+  position: fixed; /* Keeps it fixed in place */
+  top: 0;
+  left: 0;
   padding: 10px;
+  background: linear-gradient(210deg, #020202, #434343, #070707, #090909); /* Ensures background is fixed */
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+
+}
+
+@media (max-width: 480px) {
+  .chatbot-container {
+      max-width: 95vw; /* Make messages wider on small screens */
+  }
 }
 
 /* Chatbox */
@@ -13,12 +35,14 @@
   width: 800px; /* Flexible width for different screens */
   max-width: 750px;
   height: 400px;
-  background: white;
+  background: rgb(32, 28, 28);
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border: 4px solid rgb(88, 233, 88);
+
 }
 
 /* Messages Area (Scrollable) */
@@ -31,7 +55,9 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  color: #e5e5ea;
 }
+
 
 /* Message Styles */
 .message {
@@ -42,6 +68,7 @@
   white-space: pre-wrap; /* Ensures text wraps properly */
   font-size: 16px;
   line-height: 1.4;
+  /* background-color: #000000; */
 }
 
 /* User Message */
@@ -63,8 +90,8 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  border-top: 1px solid #ddd;
-  background: #f9f9f9;
+  border-top: 1px solid rgb(88, 233, 88);
+  background: rgb(32, 28, 28);
 }
 
 /* Input Field */
@@ -79,17 +106,30 @@
 }
 
 /* Buttons */
-.send-btn, .voice-btn {
+.send-btn, .voice-main-btn {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 18px;
   margin-left: 10px;
-  color: #0084ff;
+  color:  rgb(88, 233, 88);
+
+
 }
 
 .voice-btn {
-  color: rgb(0, 0, 0);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+  color:  rgb(88, 233, 88);
+
+}
+.voice-main-btn {
+  /* color: rgb(183, 179, 179); */
+  color:  rgb(88, 233, 88);
+
 }
 
 /* Responsive Design */
@@ -144,14 +184,14 @@
   padding: 10px 20px;
   background-color: rgb(0, 0, 0);
   color: rgb(241, 241, 241);
-  border: none;
+  border: solid rgb(88, 233, 88) ; 
   cursor: pointer;
   border-radius: 10px;
   font-size: 16px;
   flex: 1; /* Allows buttons to adjust dynamically */
   text-align: center;
   min-width: 80px; /* Ensures buttons don’t shrink too much */
-  max-width: 150px;
+  max-width: 200px;
 }
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -233,4 +273,12 @@
 .tag{
   font-weight: bolder;
   font-size: small;
+  background-color: #111111;
+  text-align: center;
+  width: 50px;
+  height: 20px;
+  border-radius: 50% ;
+
+  color: #ffffff;
+  border: solid rgb(88, 233, 88);
 }

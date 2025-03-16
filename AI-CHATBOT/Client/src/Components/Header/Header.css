@@ -5,7 +5,6 @@
     justify-content: flex-start; /* Align items from the left */
     padding: 10px 10px;
     background-color: rgb(0, 0, 0,.4);
-    /* border-bottom: 1px solid #ddd; */
     position:sticky;
     top: 0;
     width: 100%;

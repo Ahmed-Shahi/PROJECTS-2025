@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
 import './Body.css'
 import { FaPaperPlane, FaMicrophone } from "react-icons/fa";
@@ -116,58 +116,77 @@ const Body = () => {
     }
   }
 
-  const [previousChat, setPreviousChat] = useState([])
-  const preChat = async () => {
+  const [previousChat, setPreviousChat] = useState({answer:[],question:[]})
+  
+  async function preChat() {
+    // Is array mein un users ki id ho gi jinhony charts ko save kia ho ga
+    const existingUserId = []
+
     const userId = localStorage.getItem('userId')
     const response = await axios.get("http://localhost:5000/api/Profile");
+    
+
+    // Us array mein database mein jo users hy un ko push kia hy
+    response.data.map((data)=>{
+      existingUserId.push(data.userId)
+    })    
+
+    // Jo user abhi login hy us ki id ko fetch kia hy
+    const index = existingUserId.indexOf(userId)
+    console.log(existingUserId[index]);
+    
     // Check the User has the history or not 
-    if (await response.data[0].userId === userId) {
+    if (await existingUserId[index] === userId) {
       
       // Collecting Data from history
-      const allQuestions = await response.data[0].chats.flatMap(chat => chat.question);
-      const allAnswer = await response.data[0].chats.flatMap(chat => chat.answer);
+      const detail = response.data.find((d)=>d.userId === userId)
 
-      setPreviousChat([{
-        answer: allAnswer,
-        question:allQuestions
-      }])
-
-      const mergedObject = previousChat.reduce((acc, data) => {
-        acc.msg.push(data.question);
-        acc.ans.push(data.answer);
-        return acc;
-      }, { msg: [], ans: [] });
-     
-      // Getting Values from the Converted data to Store in the talk state
-      const Ans = mergedObject.ans.map((d) => {
-        return d
+      const allQuestions = await detail.chats.flatMap(chat => chat.question)
+      const allAnswer = await detail.chats.flatMap(chat => chat.answer)
+      
+      setPreviousChat({
+        answer: [allAnswer],
+        question: [allQuestions]
       })
-      const Msg = mergedObject.msg.map((d) => {
-        return d
-      })
-     
-      // Make simple array 
-      let newTalk =  [];
-      for (let i = 0; i < Msg[0].length; i++) { 
-        newTalk.push({
-          msg: Msg[0][i],
-          ans: Ans[0][i]
-        });
+      
+      try {
+        
+        const Ans = previousChat.answer.map( (d)  => {
+          return d;
+        })
+        const Msg = previousChat.question.map((d) => {
+          return d;
+        })
+        
+        
+        // Make simple array 
+        let newTalk =  [];
+        for (let i = 0; i < allAnswer.length; i++) { 
+          newTalk.push({
+            msg: Msg[0][i],
+            ans: Ans[0][i]
+          });
+        }
+        // Set the talk state, Now the history data is show on the Chats  
+        setTalk([...talk, ...newTalk]);
+        
+        
+      } catch (error) {
+        
+        console.log("ERORR "+error);
+        
       }
-      // Set the talk state, Now the history data is show on the Chats  
-      setTalk([...talk, ...newTalk]);
-
     }
-
   }
+   
   return (
     <div className="chatbot-container">
       <div className="button-container">
       <div className="slidebtn" >
         {/* Button to Open Drawer */}
-        <button onClick={() => setIsOpen(true)} className="open-btn">
+        {/* <button onClick={() => setIsOpen(true)} className="open-btn">
           CHAT'S
-        </button>
+        </button> */}
 
         {/* Drawer */}
         <div className={`drawer ${isOpen ? "open" : ""}`}>
@@ -191,16 +210,20 @@ const Body = () => {
           SAVE CHAT
         </button>
       </div>
-      <div>
+      {/* <div>
         <button onClick={() => listChat()} className="list-btn" >
           LIST CHAT
         </button>
-      </div>
+      </div> */}
       <div>
-        <button onClick={() => preChat()} className="pre-btn">
+        <button 
+        onClick={() => preChat()}
+
+         className="pre-btn">
           CHAT HISTORY        
         </button>
       </div>
+
       </div>
 
       <div className="chatbot-container">
@@ -212,13 +235,13 @@ const Body = () => {
                 <div>
                   <p className="tag">YOU</p>
                 </div>
-                <div className="message user">
+                <div className="message-user">
                   <pre>{data.msg}</pre>
                 </div>
                 <div>
                   <p className="tag">AI</p>
                 </div>
-                <div className="message user">
+                <div className="message-user">
                   <pre>{data.ans}</pre>
                   <button className="voice-btn" onClick={() => speakText(data.ans)} >
                     <FaMicrophone />
@@ -240,7 +263,7 @@ const Body = () => {
             <button className="send-btn" onClick={sendMessage}>
               <FaPaperPlane />
             </button>
-            <button className="voice-btn" onClick={sendVoice}>
+            <button className="voice-main-btn" onClick={sendVoice}>
               <FaMicrophone />
             </button>
           </div>

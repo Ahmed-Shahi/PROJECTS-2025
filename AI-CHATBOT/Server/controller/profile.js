@@ -23,13 +23,16 @@ async function handlecreateChat(req,res) {
 
 async function handleGetChat(req,res) {
  try {
-    // body = req.body.id
-    // console.log(body);
+    body = req.body.id
+    console.log(body);
+    //  const query = await Chats.findById('67cd88a7ff31606cc534258e')
      const query = await Chats.find({})
      return res.json(query)
+
     
  } catch (error) {
-    res.status(500).json({msg:'Server Error'})
+
+    res.status(500).json({msg:'Server Error'+ error})
  }
 }
 

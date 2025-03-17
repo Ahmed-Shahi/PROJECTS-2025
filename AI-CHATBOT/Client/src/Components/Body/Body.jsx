@@ -13,7 +13,7 @@ const Body = () => {
     console.log("Loading...")
     try {
       const response = await axios({
-        url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBgyVfrkvJv-Jnqm7iSzkxStZImn20awq8",
+        url: process.env.REACT_APP_GEMINI_API_KEY,
         method: "post",
         mode: "cors",
         timeout: 10000,

@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCkCEGnRG-kfoSgW79bsPmEYRMPNLZuIXg",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "watch-store-d107a.firebaseapp.com",
   projectId: "watch-store-d107a",
   storageBucket: "watch-store-d107a.appspot.com",

@@ -23,7 +23,7 @@ async function handlecreateChat(req,res) {
 
 async function handleGetChat(req,res) {
  try {
-  
+    
      const query = await Chats.find({})
      return res.json(query)
 

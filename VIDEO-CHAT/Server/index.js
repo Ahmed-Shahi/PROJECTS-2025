@@ -7,22 +7,28 @@ const { Server } = require('socket.io')
 const io = new Server(8000, { cors: true })
 
 io.on("connection", (socket) => {
-// exports {SocketProvider,useSocket}
-    // const nameToSocketIdMap = new Map()
-    // const socketIdToNameMap = new Map()
+    // exports {SocketProvider,useSocket}
 
     console.log("User", socket.id);
     socket.on("Join:Room", (data) => {
-        const{name,room}= data
-        // nameToSocketIdMap.set(name, socket.id)
-        // socketIdToNameMap.set(socket.id, name)
-        // console.log(nameToSocketIdMap);
-        // console.log(socketIdToNameMap);
-        io.to(room).emit("User:Joined",{name ,id: socket.id})
+        const { name, room } = data
+        io.to(room).emit("User:Joined", { name, id: socket.id })
         socket.join(room)
-        io.to(socket.id).emit("Join:Room",data)
-        console.log(data);
+        io.to(socket.id).emit("Join:Room", data)
+        // console.log(data);
+    })
 
+    socket.on('User:Call', ({ to, offer }) => {
+        io.to(to).emit("Incoming:Call", { from: socket.id, offer })
+    })
+    socket.on("Accepted:Call",({to,ans})=>{
+        io.to(to).emit("Accepted:Call", { from: socket.id, ans })
+    })
+    socket.on("Peer:Nego:Needed",({to,offer})=>{
+        io.to(to).emit("Peer:Nego:Needed", { from: socket.id, offer })
+    })
+    socket.on("Peer:Nego:Done",({to,ans})=>{
+           io.to(to).emit("Peer:Nego:Final", { from: socket.id, ans })
     })
 })
 

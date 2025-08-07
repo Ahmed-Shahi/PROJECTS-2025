@@ -12,10 +12,9 @@ io.on("connection", (socket) => {
     console.log("User", socket.id);
     socket.on("Join:Room", (data) => {
         const { name, room } = data
-        io.to(room).emit("User:Joined", { name, id: socket.id })
+        io.to(room).emit("User:Joined", { name, id : socket.id })
         socket.join(room)
         io.to(socket.id).emit("Join:Room", data)
-        // console.log(data);
     })
 
     socket.on('User:Call', ({ to, offer }) => {

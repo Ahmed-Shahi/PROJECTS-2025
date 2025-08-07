@@ -2,68 +2,67 @@ import { useSocket } from '../context/SocketProvider'
 import { useEffect, useState, useCallback, useRef, use } from 'react'
 import { useNavigate } from 'react-router-dom'
 import peer from '../service/peer'
-import ReactPlayer from "react-player";
 
 function Room() {
     const navigate = useNavigate()
     const socket = useSocket()
-    const [remoteSocketId, setRemoteSocketId] = useState(null)
+    const [remoteSocketId, setRemoteSocketId] = useState()
     const [remoteSocketName, setRemoteSocketName] = useState(null)
     const [myStream, setMyStream] = useState()
     const [remoteStream, setRemoteStream] = useState()
-    
-    const handleUserJoined = useCallback(({ name, id }) => {
-        console.log("New User Joined", name);
+
+    const handleUserJoined = useCallback(async ({ name, id }) => {
+        console.log("New User Joined", name, id);
         setRemoteSocketId(id)
         setRemoteSocketName(name)
     }, [])
-    
 
-    // const videoRef = useRef(null)
-    // useEffect(() => {
-    //     if (videoRef.current && myStream) {
-    //         videoRef.current.srcObject = myStream;
-    //     }
-    // }, [myStream]);
-    
-    
+
+    const videoRef = useRef(null)
+    useEffect(() => {
+        if (videoRef.current && myStream) {
+            videoRef.current.srcObject = myStream;
+        }
+    }, [myStream]);
+
+
     const handleCallBtn = useCallback(async () => {
         const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
             video: true
         })
+        setMyStream(stream)
+        stream.getTracks().forEach(track => {
+            peer.peer.addTrack(track, stream);
+        });
         const offer = await peer.getOffer()
         socket.emit("User:Call", { to: remoteSocketId, offer })
-        setMyStream(stream)
-    
+
     }, [socket, remoteSocketId])
-    
+
+
     const handleIncomingCall = useCallback(async ({ from, offer }) => {
-        setRemoteSocketId(from)
+        setRemoteSocketId(from);
         const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
             video: true
-        })
-        setMyStream(stream)
-        console.log(from, offer);
-        const ans = await peer.getAnswer(offer)
-        socket.emit("Accepted:Call", { to: from, ans })
+        });
+        setMyStream(stream);
 
-    }, [socket])
+        stream.getTracks().forEach(track => {
+            peer.peer.addTrack(track, stream);
+        });
 
-   
-    const handleSendStream = useCallback(() => {
-        for (const track of myStream.getTracks()) {
-                peer.peer.addTrack(track, myStream);
-            }
-        }
-    , [myStream, peer])
+        const ans = await peer.getAnswer(offer);
+        socket.emit("Accepted:Call", { to: from, ans });
+    }, [socket]);
 
-    const handleAcceptedCall = useCallback(({ from, ans }) => {
-        peer.setLocalDescription(ans)
+
+    const handleAcceptedCall = useCallback(async ({ from, ans }) => {
+        await peer.setLocalDescriptions(ans)
         console.log("Call Accepted!!");
-        handleSendStream()
-    }, [handleSendStream])
+        // sendStreamsBtn()
+    }, [])
 
     const handleNegoNeeded = useCallback(async () => {
         const offer = await peer.getOffer()
@@ -83,18 +82,32 @@ function Room() {
     }, [socket])
 
     const handlePeerNegoFinal = useCallback(async ({ from, ans }) => {
-        await peer.setLocalDescription(ans)
+        await peer.setLocalDescriptions(ans)
     }, [])
+
+    const remoteRef = useRef(null)
+
+    useEffect(() => {
+        if (remoteStream) {
+            console.log("Setting remote stream with tracks:", remoteStream.getTracks());
+        }
+        if (remoteRef.current && remoteStream) {
+            remoteRef.current.srcObject = remoteStream;
+        }
+    }, [remoteStream]);
 
     useEffect(() => {
         peer.peer.addEventListener("track", async (ev) => {
             const remoteStream = ev.streams;
             console.log("GOT TRACKS!!");
-            setRemoteStream(remoteStream[0])
-        })
-    }, [setRemoteStream])
+            setRemoteStream(remoteStream[0]);
+        });
+    }, []);
+
+
 
     useEffect(() => {
+        handleCallBtn()
         socket.on("User:Joined", handleUserJoined)
         socket.on("Incoming:Call", handleIncomingCall)
         socket.on("Accepted:Call", handleAcceptedCall)
@@ -111,16 +124,12 @@ function Room() {
     }, [socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handlePeerNegoIncoming, handlePeerNegoFinal])
 
 
-    // const remoteRef = useRef(null)
-    // useEffect(() => {
-    //     if (remoteRef.current && remoteStream) {
-    //         remoteRef.current.srcObject = remoteStream;
-    //     }
-    // }, [remoteStream]);
 
 
     const handleEndCallBtn = useCallback(() => {
-        setMyStream(null)
+        if (peer.peer) {
+            peer.peer.close();
+        }
     }, [])
 
     const handleBackBtn = () => {
@@ -128,62 +137,91 @@ function Room() {
     }
     return (
         <div>
-            <button onClick={handleBackBtn}>{'<--'}</button>
-            <h1>Welcome to Room</h1>
-            <h2>{remoteSocketId ? "Conneted" : "No In Room"}</h2>
-            <h2>{remoteSocketName ? `User : ${remoteSocketName}` : null}</h2>
-            {remoteSocketId && <button onClick={handleCallBtn}>CALL</button>}<br /><br />
-          {myStream && (
-        <>
-          <h1>My Stream</h1>
-          <ReactPlayer
-            playing
-            muted
-            height="100px"
-            width="200px"
-            url={myStream}
-          />
-        </>
-      )}
-      {remoteStream && (
-        <>
-          <h1>Remote Stream</h1>
-          <ReactPlayer
-            playing
-            muted
-            height="100px"
-            width="200px"
-            url={remoteStream}
-          />
-        </>
-      )}
-            {/* {myStream && (
-                <>
-                    <h3>MY STREAM</h3>
-                    <video
-                        ref={videoRef}
-                        autoPlay
-                        muted
-                        playsInline
-                        style={{ width: '500px', height: '300px' }}
-                    />
-                </>
-            )}
-            {remoteStream && (
-                <>
-                    <h1>Remote Stream</h1>
-                    <video
-                        ref={remoteRef}
-                        autoPlay
-                        muted
-                        playsInline
-                        style={{ width: '500px', height: '300px' }}
-                    />
-                </>
-            )} */}
+            <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 1000 }}>
+                <button
+                    onClick={handleBackBtn}
+                    style={{
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: 'linear-gradient(45deg,  #ff6ec4, #7873f5)',
+                        color: 'Black',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s ease',
+                        fontWeight: 'bolder'
+                    }}
+                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                >
+                    {"<<BACK"}
+                </button>
+            </div>
+            <h1>WELCOME TO ROOM '{localStorage.getItem("data")}'</h1>
+            <h2>{remoteSocketId ? `✅'${remoteSocketName}' CONNECTED` : "NO ONE IN ROOM"}</h2>
+            {remoteSocketId && <button onClick={handleCallBtn}
+                style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'linear-gradient(45deg, #83e92fff, #2f7f44ff)',
+                    color: 'white',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s ease'
+                }}
+                onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}>CALL</button>}<br />
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px' }}>
+                {myStream && (
+                    <div style={{
+                        border: '5px solid',
+                        borderImage: 'linear-gradient(45deg, #ff6ec4, #7873f5) 1',
+                        borderRadius: '10px',
+                        padding: '5px'
+                    }}>
+                        <h3 style={{ textAlign: 'center', margin: '5px 0' }}>(YOU)</h3>
+                        <video
+                            ref={videoRef}
+                            autoPlay
+                            muted
+                            playsInline
+                            style={{ width: '400px', height: '250px', borderRadius: '8px' }}
+                        />
+                    </div>
+                )}
+
+                {remoteStream && (
+                    <div style={{
+                        border: '5px solid',
+                        borderImage: 'linear-gradient(45deg, #00c6ff, #0072ff) 1',
+                        borderRadius: '10px',
+                        padding: '5px'
+                    }}>
+                        <h3 style={{ textAlign: 'center', margin: '5px 0' }}>({remoteSocketName}) </h3>
+                        <video
+                            ref={remoteRef}
+                            autoPlay
+                            playsInline
+                            style={{ width: '400px', height: '250px', borderRadius: '8px' }}
+                        />
+                    </div>
+                )}
+            </div>
             <br /><br />
-            {myStream && <button onClick={handleEndCallBtn} >END CALL</button>}
-            {myStream && <button onClick={handleSendStream} >SEND STREAM</button>}
+            {remoteStream && <button onClick={handleEndCallBtn} disabled={!remoteStream} style={{
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'linear-gradient(45deg, #da1414ff, #e76464ff)',
+                color: 'white',
+                fontSize: '16px',
+                cursor: 'pointer',
+                transition: 'transform 0.2s ease'
+            }}
+                onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}>END CALL</button>}
+            {/* <button onClick={handleEndCallBtn} >END CALL</button> */}
         </div>
     )
 }

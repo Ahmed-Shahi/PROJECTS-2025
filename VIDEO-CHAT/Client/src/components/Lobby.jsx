@@ -3,7 +3,6 @@ import { useCallback } from 'react'
 import { useSocket } from '../context/SocketProvider'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 function Lobby() {
     const [name, setName] = useState("")
     const [room, setRoom] = useState('')
@@ -12,7 +11,6 @@ function Lobby() {
     // console.log(socket);
     const handleJoinRoom = (data) => {
         const { name, room } = data
-        localStorage.setItem("data", room)
         console.log(name, room, socket.id);
         navigate(`/room/${room}`)
     }
@@ -26,11 +24,16 @@ function Lobby() {
 
     const handleJoinBtn = useCallback((e) => {
         e.preventDefault();
-        // console.log({ name, room });
+
+        
+        if (!localStorage.getItem("HOST")) {
+            localStorage.setItem("HOST", name);
+        }
+        localStorage.setItem("ROOM NO.", room)
+
         socket.emit("Join:Room", { name, room })
 
     }, [name, room, socket])
-
 
     return (
         <>
@@ -47,17 +50,19 @@ function Lobby() {
                     borderRadius: '15px',
                     width: '350px',
                     margin: '40px auto',
-                    // backgroundColor: '#fff',
                     boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
                 }}
             >
-                <h2 style={{ marginBottom: '10px' }}>Join Room</h2>
+                <h2 style={{ marginBottom: '10px' }}>START VIDEO CHAT</h2>
 
                 <input
                     required
                     type="text"
                     placeholder="ENTER FULL NAME"
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                        setName(e.target.value)
+
+                    }}
                     value={name}
                     style={{
                         width: '100%',

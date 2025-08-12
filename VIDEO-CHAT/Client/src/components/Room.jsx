@@ -2,8 +2,8 @@ import { useSocket } from '../context/SocketProvider'
 import { useEffect, useState, useCallback, useRef, use } from 'react'
 import { useNavigate } from 'react-router-dom'
 import peer from '../service/peer'
-
 function Room() {
+
     const navigate = useNavigate()
     const socket = useSocket()
     const [remoteSocketId, setRemoteSocketId] = useState()
@@ -13,11 +13,12 @@ function Room() {
 
     const handleUserJoined = useCallback(async ({ name, id }) => {
         console.log("New User Joined", name, id);
+        localStorage.setItem("USER", name)
         setRemoteSocketId(id)
         setRemoteSocketName(name)
     }, [])
-
-
+   
+   
     const videoRef = useRef(null)
     useEffect(() => {
         if (videoRef.current && myStream) {
@@ -61,7 +62,6 @@ function Room() {
     const handleAcceptedCall = useCallback(async ({ from, ans }) => {
         await peer.setLocalDescriptions(ans)
         console.log("Call Accepted!!");
-        // sendStreamsBtn()
     }, [])
 
     const handleNegoNeeded = useCallback(async () => {
@@ -124,17 +124,50 @@ function Room() {
     }, [socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handlePeerNegoIncoming, handlePeerNegoFinal])
 
 
-
-
-    const handleEndCallBtn = useCallback(() => {
+    const handleEndCallBtn = useCallback(() => {    
+        socket.emit("Call:Ended",{to : remoteSocketId})
+        if (videoRef.current && videoRef.current.srcObject) {
+            // Call getTracks() on the MediaStream object
+            videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null; // Clear the stream from the video element
+        }
+        console.log("Call END!");
+        
         if (peer.peer) {
+            peer.peer.getSenders().forEach(sender => sender.track?.stop());
             peer.peer.close();
         }
-    }, [])
-
-    const handleBackBtn = () => {
+        peer.resetPeer()
+        localStorage.clear()
         navigate("/")
+
+    }, [remoteSocketId,videoRef])
+    
+    const[callEndedMess,setCallEndedMess] = useState('')
+   
+    const handleCallEndedNoti = useCallback(({mes})=>{
+            setCallEndedMess(mes)
+    },[setCallEndedMess])
+    
+    useEffect(()=>{
+        socket.on("Call:Ended:Noti", handleCallEndedNoti)
+        return()=>{
+         socket.on("Call:Ended:Noti",handleCallEndedNoti)   
+        }
+    },[])
+    const handleBackBtn = () => {
+        
+        if (peer.peer) {
+            peer.peer.getSenders().forEach(sender => sender.track?.stop());
+            peer.peer.close();
+        }
+        peer.resetPeer()
+        navigate("/")
+        localStorage.clear()
+
     }
+
+
     return (
         <div>
             <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 1000 }}>
@@ -153,12 +186,15 @@ function Room() {
                     }}
                     onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-                >
+                    >
                     {"<<BACK"}
                 </button>
             </div>
-            <h1>WELCOME TO ROOM '{localStorage.getItem("data")}'</h1>
-            <h2>{remoteSocketId ? `✅'${remoteSocketName}' CONNECTED` : "NO ONE IN ROOM"}</h2>
+            {<h2>{callEndedMess}</h2>}
+            <h1>WELCOME TO ROOM ({localStorage.getItem("ROOM NO.")})</h1>
+            <h2 style={{
+                textTransform: 'uppercase'
+            }}>{remoteSocketId ? `✅'${remoteSocketName}' CONNECTED` : "NO ONE IN ROOM"}</h2>
             {remoteSocketId && <button onClick={handleCallBtn}
                 style={{
                     padding: '10px 20px',
@@ -180,7 +216,7 @@ function Room() {
                         borderRadius: '10px',
                         padding: '5px'
                     }}>
-                        <h3 style={{ textAlign: 'center', margin: '5px 0' }}>(YOU)</h3>
+                        <h3 style={{ textAlign: 'center', margin: '5px 0', textTransform: 'uppercase' }}>MY STREAM (YOU)</h3>
                         <video
                             ref={videoRef}
                             autoPlay
@@ -198,7 +234,7 @@ function Room() {
                         borderRadius: '10px',
                         padding: '5px'
                     }}>
-                        <h3 style={{ textAlign: 'center', margin: '5px 0' }}>({remoteSocketName}) </h3>
+                        <h3 style={{ textAlign: 'center', margin: '5px 0', textTransform: 'uppercase' }}>REMOTE STREAM </h3>
                         <video
                             ref={remoteRef}
                             autoPlay
@@ -221,7 +257,6 @@ function Room() {
             }}
                 onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
                 onMouseOut={(e) => e.target.style.transform = 'scale(1)'}>END CALL</button>}
-            {/* <button onClick={handleEndCallBtn} >END CALL</button> */}
         </div>
     )
 }

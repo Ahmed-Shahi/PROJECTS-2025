@@ -9,7 +9,7 @@ const io = new Server(8000, { cors: true })
 io.on("connection", (socket) => {
     // exports {SocketProvider,useSocket}
 
-    console.log("User", socket.id);
+    console.log("User", socket.id, Date());
     socket.on("Join:Room", (data) => {
         const { name, room } = data
         io.to(room).emit("User:Joined", { name, id : socket.id })
@@ -28,6 +28,9 @@ io.on("connection", (socket) => {
     })
     socket.on("Peer:Nego:Done",({to,ans})=>{
            io.to(to).emit("Peer:Nego:Final", { from: socket.id, ans })
+    })
+    socket.on("Call:Ended",({to})=>{
+        io.to(to).emit("Call:Ended:Noti",{mes:"CALL HAS BEEN ENDED!! "})
     })
 })
 

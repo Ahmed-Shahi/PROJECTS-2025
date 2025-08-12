@@ -5,7 +5,6 @@ import App from './App.jsx'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import {SocketProvider} from './context/SocketProvider.jsx'
 import Room from './components/Room.jsx'
-
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
     <BrowserRouter>

@@ -9,8 +9,8 @@ function Lobby() {
     const navigate = useNavigate()
     const socket = useSocket();
     // console.log(socket);
-    const handleJoinRoom = (data) => {
-        const { name, room } = data
+
+    const handleJoinRoom =  ({ name, room }) => {
         console.log(name, room, socket.id);
         navigate(`/room/${room}`)
     }
@@ -24,14 +24,15 @@ function Lobby() {
 
     const handleJoinBtn = useCallback((e) => {
         e.preventDefault();
-
+        console.log(socket.id);
         
         if (!localStorage.getItem("HOST")) {
             localStorage.setItem("HOST", name);
         }
         localStorage.setItem("ROOM NO.", room)
-
+        
         socket.emit("Join:Room", { name, room })
+        // socket.emit("User:Name",{User : name, id: socket.id})
 
     }, [name, room, socket])
 

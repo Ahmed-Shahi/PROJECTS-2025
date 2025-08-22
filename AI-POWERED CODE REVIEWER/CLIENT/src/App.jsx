@@ -12,23 +12,30 @@ function App() {
   const [code, setCode] = useState(` function sum() {
   return 1 + 1
   }`
-)
+  )
 
-  const [ review, setReview ] = useState(``)
+  const [review, setReview] = useState(``)
 
   useEffect(() => {
     prism.highlightAll()
   }, [])
 
-  const [load,setload] = useState(true)
-   
+  const [isLoading, setIsLoading] = useState(false);
+
   async function reviewCode() {
-    console.log('loading...');
-    const response = await axios.post('http://localhost:8000/api/review', { code })
-    setReview(response.data)
-    console.log(review);
-    console.log('Done...');
-    setload(false)
+
+    try {
+      setIsLoading(true);   // start loading
+      console.log('loading...');
+      const response = await axios.post('http://localhost:8000/api/review', { code });
+      setReview(response.data);
+      console.log('Done...');
+    } catch (err) {
+      console.error(err);
+      setReview("⚠️ Error fetching review");
+    } finally {
+      setIsLoading(false);  // stop loading
+    }
   }
 
   return (
@@ -44,10 +51,10 @@ function App() {
               style={{
                 fontFamily: '"Fira code", "Fira Mono", monospace',
                 fontSize: 16,
-                border: "1px solid #ddd",
+                border: "1px solid #000000ff",
                 borderRadius: "5px",
-                height: "100%",
-                width: "100%"
+                minHeight: "100%",
+                width: "100%",
               }}
             />
           </div>
@@ -56,11 +63,13 @@ function App() {
             className="review">Review</div>
         </div>
         <div className="right">
-          <Markdown
-
-            rehypePlugins={[rehypeHighlight]}
-
-          >{review}</Markdown>
+          {isLoading ? (
+            <p style={{ color: "white" }}>⏳ Reviewing your code...</p>
+          ) : (
+            <Markdown rehypePlugins={[rehypeHighlight]}>
+              {review}
+            </Markdown>
+          )}
         </div>
       </main>
     </>

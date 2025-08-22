@@ -1,11 +1,13 @@
 const {generateContent} = require('../model/ai.model')
 
 const handleGetReview = async (req, res) => {
-    const  prompt  = req.body.prompt
-    if (!prompt) {
+    const  code  = req.body.code
+    
+    if (!code) {
         res.status(400).send('Prompt is Required')
     } else {
-        const response = await generateContent(prompt)
+        console.log("Code Comes", Date());
+        const response = await generateContent(code)
         res.send(response)
     }
 

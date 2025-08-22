@@ -1,0 +1,97 @@
+* {
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+main {
+  height: 100%;
+  width: 100%;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+main .left,
+main .right {
+  height: 100%;
+  flex-basis: 50%;
+  border-radius: 0.7rem;
+}
+
+main .left {
+  background-color: #000000;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.code pre,
+.code pre code {
+  height: auto;
+  width: auto;
+}
+
+/* .left .code,
+.code pre,
+.code pre code {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  border-radius: 0.7rem;
+  background-color: #0c0c0c;
+} */
+
+.left .code {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  border-radius: 0.7rem;
+  background-color: #0c0c0c;
+
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+.code pre {
+  overflow: auto;
+  /* 👈 scroll here */
+  max-height: 100%;
+  /* cap to container height */
+  white-space: pre;
+  /* keep code formatting; enables horizontal scroll */
+  margin: 0;
+}
+
+main .left .review {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: linear-gradient(45deg, #9a497a, #7873f5);
+  color: #000000;
+  padding: 0.5rem 2rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 0.7rem;
+
+}
+
+
+main .right {
+  background-color: #343434;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  overflow: auto;
+}

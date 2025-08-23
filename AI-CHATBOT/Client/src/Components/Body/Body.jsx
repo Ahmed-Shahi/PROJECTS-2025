@@ -43,16 +43,20 @@ const Body = () => {
   const [isFirstFunction, setIsFirstFunction] = useState(true);
   const startListening = () => SpeechRecognition.startListening({ continuous: true })
   const stopListening = () => SpeechRecognition.stopListening()
+  const [isRecording, setIsRecording] = useState(false);
   const { transcript, resetTranscript } = useSpeechRecognition()
+
   const sendVoice = async () => {
     if (isFirstFunction) {
       console.log('start');
       resetTranscript()
       startListening()
+      setIsRecording(true);
     } else {
       console.log('stop');
       stopListening()
       setMessage(transcript)
+      setIsRecording(false);
     }
     setIsFirstFunction(!isFirstFunction);
   }
@@ -67,9 +71,10 @@ const Body = () => {
   const [isOpen, setIsOpen] = useState(false);
 
 
-  const [chatList, setChatList] = useState('')
+  // const [chatList, setChatList] = useState('')
   // To save the Chat 
   const saveChat = async () => {
+    alert("Chats have been Saved!!")
 
     //Converting the Talk data in form of array
     const mergedObject = talk.reduce((acc, data) => {
@@ -87,81 +92,85 @@ const Body = () => {
     const Msg = mergedObject.msg.map((d) => {
       return d
     })
+    
+    // const getUser = await axios.get("http://localhost:5000/api/Profile");
+    // if (!getUser.data[0].userId) {
 
-    const getUser = await axios.get("http://localhost:5000/api/Profile");
-    if (!getUser.data[0].userId) {
-
-    }
+    // }
     //Storing the Chats in Server
     const response = await axios.post("http://localhost:5000/api/Profile", {
       userId: localStorage.getItem("userId"),
       question: Msg,
       answer: Ans,
-    });
-
-
-
-  }
-
-  const listChat = async () => {
-    console.log(talk);
-
-    const response = await axios.get("http://localhost:5000/api/Profile");
-    if (response.data[0].chats[0].question[0] && response.data[0].userId === localStorage.getItem('userId')) {
-      const firstQuestion = await response.data[0].chats[0].question[0];
-      setChatList(firstQuestion);
-      console.log(chatList);
-    } else {
-      console.log("No chats found");
+      
     }
+    
+  );
+  
+
+
   }
 
-  const [previousChat, setPreviousChat] = useState({answer:[],question:[]})
-  
+  // const listChat = async () => {
+  //   console.log(talk);
+
+  //   const response = await axios.get("http://localhost:5000/api/Profile");
+  //   if (response.data[0].chats[0].question[0] && response.data[0].userId === localStorage.getItem('userId')) {
+  //     const firstQuestion = await response.data[0].chats[0].question[0];
+  //     setChatList(firstQuestion);
+  //     console.log(chatList);
+  //   } else {
+  //     console.log("No chats found");
+  //   }
+  // }
+
+  const [previousChat, setPreviousChat] = useState({ answer: [], question: [] })
+  const [loading, setLoading] = useState(false);
   async function preChat() {
+    setLoading(true);
     // Is array mein un users ki id ho gi jinhony charts ko save kia ho ga
     const existingUserId = []
 
     const userId = localStorage.getItem('userId')
     const response = await axios.get("http://localhost:5000/api/Profile");
-    
+
 
     // Us array mein database mein jo users hy un ko push kia hy
-    response.data.map((data)=>{
+    response.data.map((data) => {
       existingUserId.push(data.userId)
-    })    
+    })
 
     // Jo user abhi login hy us ki id ko fetch kia hy
     const index = existingUserId.indexOf(userId)
     console.log(existingUserId[index]);
-    
+
     // Check the User has the history or not 
     if (await existingUserId[index] === userId) {
-      
+
       // Collecting Data from history
-      const detail = response.data.find((d)=>d.userId === userId)
+      const detail = response.data.find((d) => d.userId === userId)
 
       const allQuestions = await detail.chats.flatMap(chat => chat.question)
       const allAnswer = await detail.chats.flatMap(chat => chat.answer)
-      
+
       setPreviousChat({
         answer: [allAnswer],
         question: [allQuestions]
       })
-      
+
       try {
-        
-        const Ans = previousChat.answer.map( (d)  => {
+
+        const Ans = previousChat.answer.map((d) => {
           return d;
         })
         const Msg = previousChat.question.map((d) => {
           return d;
         })
-        
-        
+
+
         // Make simple array 
-        let newTalk =  [];
-        for (let i = 0; i < allAnswer.length; i++) { 
+        let newTalk = [];
+        for (let i = 0; i < allAnswer.length; i++) {
           newTalk.push({
             msg: Msg[0][i],
             ans: Ans[0][i]
@@ -169,63 +178,70 @@ const Body = () => {
         }
         // Set the talk state, Now the history data is show on the Chats  
         setTalk([...talk, ...newTalk]);
-        
-        
+
+
       } catch (error) {
-        
-        console.log("ERORR "+error);
-        
+
+        console.log("ERORR " + error);
+
+      } finally {
+        setLoading(false); // 👈 hide loader
       }
     }
   }
-   
+
   return (
     <div className="chatbot-container">
       <div className="button-container">
-      <div className="slidebtn" >
-        {/* Button to Open Drawer */}
-        {/* <button onClick={() => setIsOpen(true)} className="open-btn">
+        <div className="slidebtn" >
+          {/* Button to Open Drawer */}
+          {/* <button onClick={() => setIsOpen(true)} className="open-btn">
           CHAT'S
         </button> */}
 
-        {/* Drawer */}
-        <div className={`drawer ${isOpen ? "open" : ""}`}>
-          {/* Close Button */}
-          <button onClick={() => setIsOpen(false)} className="close-btn">
-            ✖
-          </button>
+          {/* Drawer */}
+          <div className={`drawer ${isOpen ? "open" : ""}`}>
+            {/* Close Button */}
+            <button onClick={() => setIsOpen(false)} className="close-btn">
+              ✖
+            </button>
 
-          {/* Drawer Content */}
+            {/* Drawer Content */}
 
-          <ul>
-            <li>{`${chatList}`}</li>
-            <li><button>New Chat</button></li>
-          </ul>
+            <ul>
+              {/* <li>{`${chatList}`}</li> */}
+              <li><button>New Chat</button></li>
+            </ul>
+
+          </div>
 
         </div>
-
-      </div>
-      <div >
-        <button onClick={() => saveChat()} className="save-btn">
-          SAVE CHAT
-        </button>
-      </div>
-      {/* <div>
+        <div >
+          <button onClick={() => saveChat()} className="save-btn">
+            SAVE CHAT
+          </button>
+        </div>
+        {/* <div>
         <button onClick={() => listChat()} className="list-btn" >
           LIST CHAT
         </button>
       </div> */}
-      <div>
-        <button 
-        onClick={() => preChat()}
+        <div>
+          <button
+            onClick={() => preChat()}
 
-         className="pre-btn">
-          CHAT HISTORY        
-        </button>
+            className="pre-btn">
+            CHAT HISTORY
+          </button>
+        </div>
+
       </div>
-
-      </div>
-
+      {loading  && <div className="loader"></div>? (
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <p>⏳ Loading chat history...</p>
+        </div>
+      ) : (
+        
       <div className="chatbot-container">
         <div className="chatbox">
           <div className="messages">
@@ -263,12 +279,20 @@ const Body = () => {
             <button className="send-btn" onClick={sendMessage}>
               <FaPaperPlane />
             </button>
-            <button className="voice-main-btn" onClick={sendVoice}>
+            <button
+              // className="voice-main-btn" 
+              className={`voice-main-btn ${isRecording ? "recording" : ""}`}
+              onClick={sendVoice}>
               <FaMicrophone />
             </button>
+            {isRecording && (
+              <p style={{ color: "red", marginTop: "10px" }}>
+              </p>
+            )}
           </div>
         </div>
       </div>
+      )}
     </div>
 
   );

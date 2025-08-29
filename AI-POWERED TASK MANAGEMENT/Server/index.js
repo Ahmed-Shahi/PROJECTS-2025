@@ -1,18 +1,21 @@
 require('dotenv').config()
 const express = require('express')
 const {Connect} = require("./connection")
-const router = require('./Router/Users')
+const authRouter = require('./Router/Auth.Route')
+const profileRouter = require('./Router/Profile.Route')
 const cors = require('cors')
-
+const cookieParser = require('cookie-parser') 
 
 const app = express()
 const PORT = process.env.PORT 
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-Connect("mongodb://127.0.0.1:27017/AI_Task_Management").then(()=> console.log("Connected Successfull!!")).catch((err)=>console.log(err))
+app.use(cookieParser())
+Connect(process.env.MONGODB_URL).then(()=> console.log("Database Connected Successfull!!")).catch((err)=>console.log(err))
 
-app.use('/api',router)
+app.use('/api',authRouter)
+app.use('/api',profileRouter)
 
 app.listen(PORT,()=>{console.log("Server is Successfully Running!!");
 

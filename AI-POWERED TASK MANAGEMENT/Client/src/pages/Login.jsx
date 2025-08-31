@@ -22,10 +22,10 @@ function Login() {
             const response = await axios.post("http://localhost:8000/api/login", {
                 email,
                 password
-            });
-            if(!response.data){
+            },{ withCredentials: true });
+            if (!response.data) {
                 alert("Invalid Password")
-            }else{
+            } else {
                 console.log(response.data);
                 navigate('/profile')
             }

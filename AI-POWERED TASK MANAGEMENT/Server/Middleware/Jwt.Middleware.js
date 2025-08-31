@@ -1,13 +1,14 @@
 require("dotenv").config
 const jwt = require('jsonwebtoken')
 
-const ensureJwt = (req, res, next) => {
-    const cookiesToken = req.cookies.token
+const ensureJwt = async (req, res, next) => {
+    const cookiesToken = await req.cookies.token
     if (!cookiesToken) {
         return res.json({ mes: "Login is Required" })
     }
     try {
         const decoded = jwt.verify(cookiesToken, process.env.JWT_TOKEN)
+        console.log(decoded);
         req.user = decoded
         next();
 

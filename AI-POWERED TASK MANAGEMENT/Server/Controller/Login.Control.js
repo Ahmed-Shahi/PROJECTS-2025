@@ -31,8 +31,8 @@ const handleLoginBtn = async (req, res) => {
 
             res.cookie("token", token, {
                 httpOnly: true,
-                secure: true,      // true if HTTPS
-                sameSite: "strict" // prevent CSRF
+                secure: false,
+                sameSite: "lax"
             });
 
             res.status(200).json({ user, token })

@@ -1,0 +1,65 @@
+/* Make the header sticky at the top */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align items from the left */
+    padding: 10px 10px;
+    background-color: rgb(0, 0, 0,.4);
+    position:fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure the header is above other content */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-right: 15px; /* Space between logo and user email */
+}
+
+
+.logo {
+    height: 40px; /* Adjust size as needed */
+    border-radius: 20px;
+}
+
+.profile-info {
+
+    flex-grow: 1;
+    color: #ffffff;
+    font-size: 18px;
+    margin-right: 20px; /* Space between user email and logout button */
+    animation: fadeIn 1s ease-out; /* Apply the fadeIn animation */
+    text-transform: capitalize;
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.logout-button {
+    padding: 10px 20px;
+    background-color: rgb(0, 0, 0,0);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.logout-button .logout-icon {
+    height: 20px; /* Adjust as needed */
+    margin-right: 8px; /* Space between icon and text */
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+.logout-button:focus {
+    outline: none;
+}

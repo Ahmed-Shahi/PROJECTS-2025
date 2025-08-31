@@ -8,10 +8,20 @@ const cookieParser = require('cookie-parser')
 
 const app = express()
 const PORT = process.env.PORT 
-app.use(cors())
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173", // Vite default port
+  "http://127.0.0.1:5173"
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
+app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(cookieParser())
 Connect(process.env.MONGODB_URL).then(()=> console.log("Database Connected Successfull!!")).catch((err)=>console.log(err))
 
 app.use('/api',authRouter)

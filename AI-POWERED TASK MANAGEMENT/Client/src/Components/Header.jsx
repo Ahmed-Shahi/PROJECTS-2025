@@ -3,27 +3,30 @@ import './Header.css'
 import { useNavigate } from 'react-router-dom';
 import logout1 from "../Assests/logout.png"
 import axios from 'axios'
-
+import { useLocation } from "react-router-dom";
 function Header() {
 
+    const location = useLocation();
     const navigate = useNavigate()
+
     // id ka name render karny ky liy// 
-    
+    const [userRole, setUserRole] = useState(null);
     const [userName, setUserName] = useState(null);
     useEffect(() => {
         const getData = async () => {
-            const getEmail = await axios.get('http://localhost:8000/api/profile', {
-                withCredentials: true
-            })
+            const path = location.pathname.toString().split('/')[2]
+            console.log("Path:", path);
 
-            const email = getEmail.data.user.email
-            const response = await axios.get('http://localhost:8000/api/users', {
+            const getEmail = await axios.get(`http://localhost:8000/api/profile/${path}`, {
                 withCredentials: true
             })
-            const data = response.data
-            const userData = data.find((u) => u.email === email);
-            console.log(userData);
-            setUserName(userData.userName)
+            console.log(getEmail);
+
+            if (path == getEmail.data.onlyLogin[0]._id.toString()) {
+                console.log(getEmail.data);
+                setUserName(getEmail.data.onlyLogin[0].userName)
+                setUserRole(getEmail.data.onlyLogin[0].role)
+            }
         }
         getData()
 
@@ -31,7 +34,9 @@ function Header() {
 
     // logout karny kt liy
     const Logout = async () => {
-        await axios.post("http://localhost:8000/api/logout", {}, {
+        const path = location.pathname.toString().split('/')[2]
+        console.log("Logout Path:", path);
+        await axios.post(`http://localhost:8000/api/profile/${path}/logout`, {}, {
             withCredentials: true
         });
         setUserName("")
@@ -42,10 +47,13 @@ function Header() {
 
             <div className="header-container">
                 <div className="logo-container">
-                    {/* <img src={Logo} alt="Logo" className="logo" /> */}
+
                 </div>
                 <div className="profile-info">
-                    {userName}
+
+                    <strong>{userName}</strong>
+                    <span style={{ fontSize: '10px' }}> {userRole}</span>
+
                 </div>
                 <button
                     className="logout-button"

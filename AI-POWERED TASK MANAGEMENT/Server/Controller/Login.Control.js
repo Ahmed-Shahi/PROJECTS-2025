@@ -8,18 +8,18 @@ const handleLoginBtn = async (req, res) => {
 
     try {
         const user = await SignUp.findOne({ email: email })
-
+        
         if (!user) {
             return res.status(400).json({ Message: "User Not Found!!!" });
         }
-        console.log(user);
-
+        console.log('userLogin',user);
+        
         bcrypt.compare(password, user.password, async function (err, result) {
             result == true
             if (!result) {
                 return res.status(400).json({ Message: err });
             }
-
+            
             const token = jwt.sign(
                 {
                     email: email,
@@ -27,14 +27,14 @@ const handleLoginBtn = async (req, res) => {
                 },
                 process.env.JWT_TOKEN,
                 { expiresIn: "3h" })
-
-
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: false,
-                sameSite: "lax"
-            });
-
+                
+                
+                res.cookie(`Token_${user._id}`, token, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: "lax"
+                });
+                
             res.status(200).json({ user, token })
 
         });

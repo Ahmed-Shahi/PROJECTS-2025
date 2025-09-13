@@ -10,6 +10,10 @@ const mySchema = new mongoose.Schema({
     },
     password: {
         type: String,
+    },
+    role:{
+        type: String,
+        enum: ["Content-Writer","Frontend-Developer","Backend-Developer","SEO","Quality-Assure","Project-Manager","Team-Lead"]
     }
 }, { timestamps: true })
 

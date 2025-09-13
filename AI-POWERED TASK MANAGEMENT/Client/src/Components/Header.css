@@ -30,7 +30,7 @@
     font-size: 18px;
     margin-right: 20px; /* Space between user email and logout button */
     animation: fadeIn 1s ease-out; /* Apply the fadeIn animation */
-    text-transform: capitalize;
+    text-transform: uppercase;
 }
 @keyframes fadeIn {
     0% {

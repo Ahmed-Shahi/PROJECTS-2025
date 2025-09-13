@@ -7,10 +7,13 @@ function SignUp() {
     const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [role, setRole] = useState('')
     const navigate = useNavigate()
-
+    
+    const allRoles =  ["Content-Writer","Frontend-Developer","Backend-Developer","SEO","Quality-Assure","Project-Manager","Team-Lead"]
+    
     const handleSignUpBtn = async () => {
-        await axios.post('http://localhost:8000/api/users', { userName, email, password });
+        await axios.post('http://localhost:8000/api/users', { userName, email, password, role });
         console.log("User Register");
         navigate('/login')
     }
@@ -34,6 +37,15 @@ function SignUp() {
                 type="password"
                 placeholder='ENTER PASSWORD....'
             />
+            <select
+                value={role}
+                onChange={(e) => { setRole(e.target.value) }}
+            >
+                 <option value="" >-- Please choose an option --</option>
+                {allRoles.map((v,i)=>(
+                    <option key={i} value={v}>{v}</option>
+                ))}
+            </select>
             <button
                 onClick={handleSignUpBtn}
             >SIGN UP</button>

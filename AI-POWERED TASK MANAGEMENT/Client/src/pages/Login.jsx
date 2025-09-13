@@ -9,13 +9,12 @@ function Login() {
 
     const handleLoginBtn = async () => {
 
-        // navigate(`/Login:${email}`)        
 
         const response = await axios.get('http://localhost:8000/api/login');
         const data = response.data
         const userData = data.find((u) => u.email === email);
-        // console.log(userData);
-
+        console.log(userData);
+        
         if (!userData) {
             alert("Invalid Email!!")
         } else {
@@ -27,27 +26,10 @@ function Login() {
                 alert("Invalid Password")
             } else {
                 console.log(response.data);
-                navigate('/profile')
+                navigate(`/profile/${userData._id}`)
+            
             }
         }
-
-
-
-        //     const hashPassword = userData.password
-        //     bcrypt.compare(password, hashPassword, function (err, result) {
-        //         result == true
-        //         if (!result) {
-        //             alert(err)
-        //         }else{
-        //             alert("Login Successfull")
-        //         }
-        //     });
-        // response.data.map((v,i)=>{
-
-        // setAllEmail(v.email)
-        // console.log(allEmail);
-
-        // })
     }
     return (
         <div>

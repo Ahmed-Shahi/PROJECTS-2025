@@ -11,7 +11,7 @@ const handleGetData = async (req, res) => {
 }
 
 const handleSignUpBtn = async (req, res) => {
-    const { userName, email, password } = await req.body
+    const { userName, email, password, role } = await req.body
     try {
         const saltRounds = 10;
 
@@ -20,6 +20,7 @@ const handleSignUpBtn = async (req, res) => {
             userName: userName,
             email: email,
             password: hash,
+            role: role
         });
 
         res.send({ mes: "User Save" })

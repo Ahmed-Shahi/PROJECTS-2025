@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-function TaskManager() {
+function Admin_Body({ action }) {
   const [tasks, setTasks] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -20,7 +20,7 @@ function TaskManager() {
     e.preventDefault();
     setTasks([...tasks, { ...formData, id: Date.now() }]);
     console.log(tasks);
-    
+
     setFormData({
       title: "",
       description: "",
@@ -47,59 +47,59 @@ function TaskManager() {
       (filter.priority === "All" || task.priority === filter.priority)
     );
   });
+  console.log("action", action);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      
-      <h1 className="text-2xl font-bold mb-4">Task Management</h1>
 
-      {/* Task Form */}
-      <form
-        onSubmit={handleAddTask}
-        className="bg-gray-100 p-4 rounded-lg mb-6 shadow"
-      >
-        <h2 className="text-lg font-semibold mb-2">Add Task</h2>
-        <input
-          type="text"
-          name="title"
-          placeholder="Task Title"
-          value={formData.title}
-          onChange={handleChange}
-          className="border p-2 w-full mb-2 rounded"
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          className="border p-2 w-full mb-2 rounded"
-        />
-        <input
-          type="date"
-          name="deadline"
-          value={formData.deadline}
-          onChange={handleChange}
-          className="border p-2 w-full mb-2 rounded"
-        />
-        <select
-          name="priority"
-          value={formData.priority}
-          onChange={handleChange}
-          className="border p-2 w-full mb-2 rounded"
+      <h3 style={{textTransform:"uppercase"}}>{action ? action.userName : 'Task Management'} <span style={{fontSize:'10px'}}>{action ? action.role: ''}</span></h3>
+      {action ?
+        <form
+          onSubmit={handleAddTask}
+          className="bg-gray-100 p-4 rounded-lg mb-6 shadow"
         >
-          <option>Low</option>
-          <option>Medium</option>
-          <option>High</option>
-        </select>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Add Task
-        </button>
-      </form>
-
+          <h2 className="text-lg font-semibold mb-2">Add Task</h2>
+          <input
+            type="text"
+            name="title"
+            placeholder="Task Title"
+            value={formData.title}
+            onChange={handleChange}
+            className="border p-2 w-full mb-2 rounded"
+            required
+          />
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={formData.description}
+            onChange={handleChange}
+            className="border p-2 w-full mb-2 rounded"
+          />
+          <input
+            type="date"
+            name="deadline"
+            value={formData.deadline}
+            onChange={handleChange}
+            className="border p-2 w-full mb-2 rounded"
+          />
+          <select
+            name="priority"
+            value={formData.priority}
+            onChange={handleChange}
+            className="border p-2 w-full mb-2 rounded"
+          >
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Add Task
+          </button>
+        </form>
+        : ""}
       {/* Filters */}
       <div className="flex gap-4 mb-4">
         <select
@@ -175,4 +175,4 @@ function TaskManager() {
   );
 }
 
-export default TaskManager;
+export default Admin_Body;

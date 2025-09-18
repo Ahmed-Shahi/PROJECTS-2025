@@ -1,0 +1,62 @@
+/* Whole page */
+.layout {
+  display: flex;
+  flex-direction: column;  /* default: stack vertically */
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0d6efd;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Fixed Header */
+.layout > header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #0d6efd; /* Bootstrap blue */
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 1000;
+}
+
+/* Content below header */
+.content {
+  display: flex;
+  flex: 1;
+  margin-top: 60px; /* push down under header */
+  height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.content > div:first-child {
+  width: 250px;
+  height: 550px;
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Main body */
+.content > div:last-child {
+  flex: 1;
+  padding: 20px;
+  background: #981717;
+  overflow-y: auto;
+  width: 100vw;   /* full screen width */
+  box-sizing: border-box; /* include padding inside width */
+}
+
+/* Responsive (hide sidebar on small screens) */
+@media (max-width: 768px) {
+  .content > div:first-child {
+    display: none;
+  }
+}

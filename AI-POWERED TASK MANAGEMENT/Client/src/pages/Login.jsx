@@ -14,20 +14,25 @@ function Login() {
         const data = response.data
         const userData = data.find((u) => u.email === email);
         console.log(userData);
-        
+
         if (!userData) {
             alert("Invalid Email!!")
         } else {
             const response = await axios.post("http://localhost:8000/api/login", {
                 email,
                 password
-            },{ withCredentials: true });
+            }, { withCredentials: true });
             if (!response.data) {
                 alert("Invalid Password")
             } else {
                 console.log(response.data);
-                navigate(`/profile/${userData._id}`)
-            
+                if (response.data.user.role == "Team-Lead") {
+                    navigate(`/profile/admin/${userData._id}`)
+                }
+                else {
+                    navigate(`/profile/${userData._id}`)
+                }
+
             }
         }
     }

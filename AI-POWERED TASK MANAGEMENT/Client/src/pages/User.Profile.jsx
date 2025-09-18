@@ -1,9 +1,9 @@
 import React from 'react'
 import Header from '../Components/Header'
-import Body from '../Components/Body'
+import User_Body from '../Components/User.Body'
 import Left from '../Components/Left'
-import './Profile.css'
-function Profile() {
+import './Admin.Profile.css'
+function User_Profile() {
   return (
      <div className="layout">
       {/* Fixed Header */}
@@ -14,10 +14,10 @@ function Profile() {
         <Left />
 
         {/* Main Body */}
-        <Body />
+        <User_Body />
       </div>
     </div>
   )
 }
 
-export default Profile
+export default User_Profile

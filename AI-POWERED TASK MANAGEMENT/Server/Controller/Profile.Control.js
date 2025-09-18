@@ -48,4 +48,6 @@ const handleLogoutBtn = async (req, res) => {
     });
     res.json({ message: "Logged out successfully" });
 }
+
+
 module.exports = { handleGetTask, handleGetData,handleLogoutBtn }

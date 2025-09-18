@@ -30,7 +30,15 @@ const handleSignUpBtn = async (req, res) => {
     }
 }
 
+const handleGetDataById =async (req,res)=>{
+    const {userId} = req.body
+     try {
+        const query = await SignUp.findById(userId)
+        return res.json(query)
+    } catch (error) {
+        res.send(error.Message)
+    }
+}
 
 
-
-module.exports = { handleSignUpBtn, handleGetData }
+module.exports = { handleSignUpBtn, handleGetData ,handleGetDataById}

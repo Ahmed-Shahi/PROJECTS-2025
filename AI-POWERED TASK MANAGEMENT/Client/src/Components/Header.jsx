@@ -14,7 +14,10 @@ function Header() {
     const [userName, setUserName] = useState(null);
     useEffect(() => {
         const getData = async () => {
-            const path = location.pathname.toString().split('/')[2]
+            const url = location.pathname.toString().split('/')
+            const index = url.length-1
+
+            const path = location.pathname.toString().split('/')[index]
             console.log("Path:", path);
 
             const getEmail = await axios.get(`http://localhost:8000/api/profile/${path}`, {

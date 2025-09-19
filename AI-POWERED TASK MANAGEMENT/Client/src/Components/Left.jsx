@@ -38,7 +38,7 @@ function Left({setAction}) {
     },{
       withCredentials: true
     })
-    console.log(response.data);
+    // console.log(response.data);
     setAction(response.data)
     
     

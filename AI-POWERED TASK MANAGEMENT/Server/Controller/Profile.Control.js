@@ -4,30 +4,45 @@ const SignUp = require("../Model/Users.Model")
 const handleGetTask = async (req, res) => {
     try {
         const query = await Tasks.find({})
-        return res.json(query)
+        console.log("Get Task", query);
+        
+        return res.json(query) 
     } catch (error) {
         res.send(error.Message)
     }
 }
 
+const handleCreateTask = async (req, res) => {
+    const {finalData} =  req.body
+    console.log("Task Data: ", finalData);
+    const repsonse = await Tasks.create({
+        title: finalData.title,
+        description: finalData.description,
+        deadline: finalData.deadline,
+        priority: finalData.priority,
+        status: finalData.status,
+        assignee: finalData.assignee,
+        createdBy: finalData.createdBy
+    })
+    console.log(repsonse);
+    
+}
+
 const handleGetData = async (req, res) => {
     const path = req.path
     const userId = path.split('/')[2]
-    console.log("ID:",userId);
-    
-    // const email = req.user.email
-    // console.log(email);
+    console.log("ID:", userId);
+
+
     try {
-        // const loginData = await SignUp.find({ email })
         const allData = await SignUp.find({})
-        const onlyLogin = await SignUp.find({_id:userId})
+        const onlyLogin = await SignUp.find({ _id: userId })
         console.log(onlyLogin);
 
-        return res.json({ 
+        return res.json({
             onlyLogin,
-            // loginData, 
             allData,
-         })
+        })
     } catch (error) {
         res.send(error.Message)
     }
@@ -35,12 +50,12 @@ const handleGetData = async (req, res) => {
 
 const handleLogoutBtn = async (req, res) => {
     const path = req.path
-    console.log('logout path',path);
+    console.log('logout path', path);
     const userId = path.split('/')[2]
     // const userData = await SignUp.find({_id:userId})
     // const userId = userData[0]._id
-    
-    
+
+
     res.clearCookie(`Token_${userId}`, {
         httpOnly: true,
         secure: false,   // true in production (HTTPS)
@@ -50,4 +65,9 @@ const handleLogoutBtn = async (req, res) => {
 }
 
 
-module.exports = { handleGetTask, handleGetData,handleLogoutBtn }
+module.exports = {
+    handleGetTask,
+    handleCreateTask,
+    handleGetData,
+    handleLogoutBtn
+}

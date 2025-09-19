@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios'
+
 function Admin_Body({ action }) {
-  const [tasks, setTasks] = useState([]);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -8,19 +10,23 @@ function Admin_Body({ action }) {
     priority: "Medium",
     status: "To Do",
   });
-  const [filter, setFilter] = useState({ status: "All", priority: "All" });
 
+  const [filter, setFilter] = useState({ status: "All", priority: "All" });
+  
   // Handle form input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  
   // Add task
-  const handleAddTask = (e) => {
+  const handleAddTask = async (e) => {
     e.preventDefault();
-    setTasks([...tasks, { ...formData, id: Date.now() }]);
-    console.log(tasks);
-
+    
+    const url = location.pathname.toString().split('/')
+    const index = url.length - 1
+    const adminId = location.pathname.toString().split('/')[index]
+    const assigneeId = action._id
+    
     setFormData({
       title: "",
       description: "",
@@ -28,31 +34,44 @@ function Admin_Body({ action }) {
       priority: "Medium",
       status: "To Do",
     });
-  };
+    const finalData = {
+      ...formData,
+      assignee: assigneeId,
+      createdBy: adminId
+    };
+    
+    console.log("finalData:", finalData);
+    await axios.post(`http://localhost:8000/api/task/${adminId}`, { finalData }, {
+      withCredentials: true
+    })
+    
+    };
 
-  // Update task status
-  const updateTaskStatus = (id, status) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, status } : task)));
-  };
-
-  // Delete task
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
-
-  // Apply filters
-  const filteredTasks = tasks.filter((task) => {
-    return (
-      (filter.status === "All" || task.status === filter.status) &&
-      (filter.priority === "All" || task.priority === filter.priority)
-    );
-  });
-  console.log("action", action);
+  const [allTask, setAllTask] = useState([]);
+    
+  useEffect(() => {
+    const getData = async () => {
+      const url = location.pathname.toString().split('/')
+      const index = url.length - 1
+      const adminId = location.pathname.toString().split('/')[index]
+      console.log("adminId", adminId);
+      
+      const response = await axios.get(`http://localhost:8000/api/task/${adminId}`,{
+        withCredentials: true
+      })
+      
+      setAllTask(response.data)
+      
+    }
+    getData()
+  }, [location.pathname])
+  
+  console.log(allTask)
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
 
-      <h3 style={{textTransform:"uppercase"}}>{action ? action.userName : 'Task Management'} <span style={{fontSize:'10px'}}>{action ? action.role: ''}</span></h3>
+      <h3 style={{ textTransform: "uppercase" }}>{action ? action.userName : 'Task Management'} <span style={{ fontSize: '10px' }}>{action ? action.role : ''}</span></h3>
       {action ?
         <form
           onSubmit={handleAddTask}
@@ -128,48 +147,16 @@ function Admin_Body({ action }) {
       </div>
 
       {/* Task List */}
-      <div className="space-y-4">
-        {filteredTasks.map((task) => (
-          <div
-            key={task.id}
-            className="bg-white shadow p-4 rounded flex justify-between items-start"
-          >
-            <div>
-              <h3 className="text-lg font-semibold">{task.title}</h3>
-              <p className="text-sm text-gray-600">{task.description}</p>
-              <p className="text-sm">
-                <strong>Deadline:</strong> {task.deadline || "No deadline"}
-              </p>
-              <p className="text-sm">
-                <strong>Priority:</strong> {task.priority}
-              </p>
-              <p className="text-sm">
-                <strong>Status:</strong> {task.status}
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <select
-                value={task.status}
-                onChange={(e) => updateTaskStatus(task.id, e.target.value)}
-                className="border p-1 rounded"
-              >
-                <option>To Do</option>
-                <option>In Progress</option>
-                <option>Completed</option>
-              </select>
-              <button
-                onClick={() => deleteTask(task.id)}
-                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-        {filteredTasks.length === 0 && (
-          <p className="text-gray-500">No tasks found.</p>
-        )}
+      <div>      
+          <h1>task</h1>
+        <ul>
+        {allTask.map((value,index)=>{
+            return <li key={index}>
+              <span>{value.title}</span> 
+              <span>{value.description}</span> 
+              </li>
+        })} 
+        </ul>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ function Header() {
     useEffect(() => {
         const getData = async () => {
             const url = location.pathname.toString().split('/')
-            const index = url.length-1
+            const index = url.length - 1
 
             const path = location.pathname.toString().split('/')[index]
             console.log("Path:", path);
@@ -37,7 +37,10 @@ function Header() {
 
     // logout karny kt liy
     const Logout = async () => {
-        const path = location.pathname.toString().split('/')[2]
+        const url = location.pathname.toString().split('/')
+        const index = url.length - 1
+
+        const path = location.pathname.toString().split('/')[index]
         console.log("Logout Path:", path);
         await axios.post(`http://localhost:8000/api/profile/${path}/logout`, {}, {
             withCredentials: true

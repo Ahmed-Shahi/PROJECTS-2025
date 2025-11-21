@@ -1,0 +1,78 @@
+.dashboard{
+  overflow: hidden;
+}
+.doctor-detail-container {
+  display: flex;
+  width: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+  gap: 0px;
+  margin-top: -20px;
+}
+
+.doctor-image-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.doctor-image {
+  width: 100%;
+  max-width: 350px;
+  border-radius: 6px;
+  height: 50vh;
+}
+
+.doctor-info-section {
+  flex: 2;
+  background: #ffffff;
+  padding: 20px 30px;
+  color: #3f74e8;
+  max-height: 85vh;
+}
+
+.doctor-name {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.doctor-qual {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.doctor-position {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+/* Clinic box */
+.clinic-box {
+  border: 3px solid #ececec;
+  padding: 10px;
+  border-radius: 5px;
+  height: 60vh;
+}
+
+
+.clinic-header {
+  background: #dedede;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.collapse-icon {
+  background: #333;
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  text-align: center;
+  border-radius: 3px;
+  line-height: 26px;
+}

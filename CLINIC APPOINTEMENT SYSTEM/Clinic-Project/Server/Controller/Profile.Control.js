@@ -1,6 +1,6 @@
 const Doctor = require("../Model/Doctor.Model");
 const SignUp = require("../Model/Users.Model")
-
+const Appointment = require("../Model/Appointment.Model")
 
 const handleGetData = async (req, res) => {
     try {
@@ -59,9 +59,42 @@ const handleGetDoctor = async (req, res) => {
         console.log(error);
     }
 }
+
+const handleBookBtn = async (req, res) => {
+    try {
+        const {
+            patientName,
+            gender,
+            age,
+            phone,
+            email,
+            doctor,
+            date,
+            time,
+            disease } = await req.body
+    
+        Appointment.create({
+            patientName: patientName,
+            gender: gender,
+            age: age,
+            phone: phone,
+            email: email,
+            doctor: doctor,
+            date: date,
+            time: time,
+            disease: disease
+        })
+        res.send({ mes: "Appointment has been Book" })
+        
+    } catch (error) {
+        return res.json({ Message: "Server Error" })
+    }
+
+}
 module.exports = {
     handleGetData,
     handleLogoutBtn,
     handleGetAllDoctor,
-    handleGetDoctor
+    handleGetDoctor,
+    handleBookBtn
 }

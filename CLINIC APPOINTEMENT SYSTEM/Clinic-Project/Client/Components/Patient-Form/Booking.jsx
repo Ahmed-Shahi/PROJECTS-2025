@@ -1,7 +1,7 @@
 import Stepper from './Stepper'
 import React from 'react'
 
-function PatientForm() {
+function Booking() {
   return (
     <div>
       <Stepper/>
@@ -9,4 +9,4 @@ function PatientForm() {
   )
 }
 
-export default PatientForm
+export default Booking

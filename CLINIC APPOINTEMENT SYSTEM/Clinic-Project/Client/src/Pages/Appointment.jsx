@@ -5,9 +5,9 @@ import axios from 'axios'
 import LogoutIcon from '../assets/Logout.png'
 import userImg from '../assets/user.png'
 import { useNavigate } from 'react-router-dom'
-import PatientForm from '../../Components/Patient-Form/Patient-Form'
+import Booking from '../../Components/Patient-Form/Booking'
 
-function Appointment(props) {
+function Appointment() {
     const navigate = useNavigate()
 
     const userId = location.pathname.toString().split('/')[2]
@@ -87,7 +87,7 @@ function Appointment(props) {
                                     <span className="collapse-icon">−</span>
                                     <span>BOOK YOUR APPOINTMENT</span>
                                 </div><br />
-                                    <PatientForm/>
+                                    <Booking/>
                             </div>
                         </div>
                     </div>

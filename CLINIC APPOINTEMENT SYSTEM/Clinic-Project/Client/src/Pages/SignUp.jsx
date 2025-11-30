@@ -4,17 +4,12 @@ import './SignUp.css'
 import eyeOpen from '../assets/EyeOpen.png'
 import eyeClosed from '../assets/EyeClosed.png'
 import { useNavigate } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import app from '../Config/Firebase'
 import axios from 'axios'
 
 function SignUp() {
-    const auth = getAuth(app);
 
     const [showPassword, setShowPassword] = useState(false);
-
     const navigate = useNavigate()
-
     const [userEmail, setUserEmail] = useState('')
     const [userName, setUserName] = useState('')
     const [userPassword, setUserPassword] = useState('')

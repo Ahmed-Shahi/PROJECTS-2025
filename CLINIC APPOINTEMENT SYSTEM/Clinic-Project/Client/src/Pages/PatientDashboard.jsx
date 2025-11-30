@@ -59,6 +59,16 @@ const PatientDashboard = () => {
         console.log(userId);
         navigate(`/dashboard/${userId}/${doctorId}`)
     }
+
+    const handleBackBtn = async () => {
+        const userId = location.pathname.toString().split('/')[2]
+        console.log("Logout Path:", userId);
+        await axios.post(`http://localhost:8000/api/profile/${userId}/logout`, {}, {
+            withCredentials: true
+        });
+        navigate('/login')
+    }
+
     return (
         <div className="dashboard">
             {userName ?
@@ -106,11 +116,11 @@ const PatientDashboard = () => {
                     </main>
                     {/* <button className="appointment-btn">Get Appointment</button> */}
                 </>
-                : 
+                :
                 <div>
                     <h1 style={{ color: 'black' }}>{errorMessage}</h1>
                     <br />
-                    <h4 style={{ color: 'black' }}>{'<<<'}Back to Login Again{">>>"} <button style={{backgroundColor:'red'}} onClick={()=>navigate('/login')}>{'<- '}BACK </button></h4>
+                    <h4 style={{ color: 'black' }}>{'<<<'}Back to Login Again{">>>"} <button style={{ backgroundColor: 'red' }} onClick={handleBackBtn}>{'<- '}BACK </button></h4>
                 </div>
             }
         </div >

@@ -5,8 +5,9 @@ import axios from 'axios'
 import LogoutIcon from '../assets/Logout.png'
 import userImg from '../assets/user.png'
 import { useNavigate } from 'react-router-dom'
+import PatientForm from '../../Components/Patient-Form/Patient-Form'
 
-function Appointment() {
+function Appointment(props) {
     const navigate = useNavigate()
 
     const userId = location.pathname.toString().split('/')[2]
@@ -33,6 +34,7 @@ function Appointment() {
         }
         getUserData()
         getdocTime()
+        
     }, [])
 
     const handleLogoutBtn = async () => {
@@ -79,16 +81,13 @@ function Appointment() {
 
                             <p className="doctor-qual">{doctorData.specialty} |  {doctorData.designation} </p>
 
-                            {/* <p className="doctor-position">
-                                {doctorData.designation}
-                            </p> */}
-
                             {/* CLINIC BOX */}
                             <div className="clinic-box">
                                 <div className="clinic-header">
                                     <span className="collapse-icon">−</span>
-                                    <span>Appointment Form</span>
-                                </div>
+                                    <span>BOOK YOUR APPOINTMENT</span>
+                                </div><br />
+                                    <PatientForm/>
                             </div>
                         </div>
                     </div>

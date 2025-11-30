@@ -24,6 +24,8 @@
 }
 
 .doctor-info-section {
+  border: 2px solid black;
+  border-radius: 30px;
   flex: 2;
   background: #ffffff;
   padding: 20px 30px;
@@ -50,12 +52,12 @@
 
 /* Clinic box */
 .clinic-box {
-  border: 3px solid #ececec;
+  border: 3px solid rgb(230, 65, 65);
   padding: 10px;
   border-radius: 5px;
-  height: 60vh;
+  max-height: 60vh;
+  overflow-y: scroll;
 }
-
 
 .clinic-header {
   background: #dedede;
@@ -64,7 +66,11 @@
   align-items: center;
   font-size: 18px;
   gap: 10px;
+  color: black;
   cursor: pointer;
+  position: sticky;
+  top: 0;
+  margin-top: -10px;
 }
 
 .collapse-icon {

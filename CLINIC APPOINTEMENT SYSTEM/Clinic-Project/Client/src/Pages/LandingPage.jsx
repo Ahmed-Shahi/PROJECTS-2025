@@ -2,16 +2,16 @@ import React from 'react'
 import './LandingPage.css'
 import doctorImg from '../assets/Doctor.png'
 import logoImg from '../assets/Logo.png'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function LandingPage() {
   const navigate = useNavigate()
-  
-  
-  const bookBtn = ()=>{
+
+
+  const bookBtn = () => {
     navigate('/SignUp')
   }
-  
+
   return (
     <div className="landing-page">
       <nav className="navbar">

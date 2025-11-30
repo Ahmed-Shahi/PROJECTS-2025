@@ -3,16 +3,12 @@ import { useState } from 'react';
 import './Login.css'
 import eyeOpen from '../assets/EyeOpen.png'
 import eyeClosed from '../assets/EyeClosed.png'
-import googleIcon from '../assets/GoolgeIcon.png'
 import { useNavigate } from 'react-router-dom';
-import app from '../Config/Firebase'
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import axios from 'axios'
 
 
 function Login() {
 
-    const auth = getAuth(app);
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -40,7 +36,7 @@ function Login() {
                 userEmail,
                 userPassword
             }, { withCredentials: true });
-            if (response.data.Message == 'Password Incorrect!!') {                
+            if (response.data.Message == 'Password Incorrect!!') {
                 alert("Invalid Password")
             } else {
                 console.log(response.data);
@@ -49,39 +45,8 @@ function Login() {
         }
     }
 
-    const provider = new GoogleAuthProvider();
 
-    const handleGoogleLogin = () => {
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                const token = credential.accessToken;
-                console.log(token);
 
-                // The signed-in user info.
-
-                const userId = result.user.uid;
-                console.log(userId);
-                setCookie(`Token_${userId}`, userId, { path: '/' });
-                alert('Successfully Login')
-                setUserEmail('');
-                setUserPassword('');
-                navigate(`/Dashboard/${userId}`)
-                // IdP data available using getAdditionalUserInfo(result)
-                // ...
-            }).catch((error) => {
-                // Handle Errors here.
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                alert(errorMessage)
-                // The email of the user's account used.
-                // const email = error.customData.email;
-                // alert(email)
-                // The AuthCredential type that was used.
-                const credential = GoogleAuthProvider.credentialFromError(error);
-                // ...
-            });
-    }
     return (
         <div className="signup-page">
             <div className="signup-container">
@@ -129,13 +94,6 @@ function Login() {
 
                 <div>
                     <br />
-                    <hr />
-                    <button
-                        className="google-btn"
-                        onClick={handleGoogleLogin}
-                    >
-                        <img src={googleIcon} alt="logo" className='googleIcon' /><span className='google-btn-text'> Log in With Google</span>
-                    </button>
                 </div>
             </div>
         </div>

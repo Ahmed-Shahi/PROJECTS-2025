@@ -1,0 +1,60 @@
+/* Page center and background */
+.form-wrapper {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  padding: 25px;
+  text-align: center;
+  animation: fadeIn 0.4s ease-in;
+}
+
+.form-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #2d2f36;
+}
+
+/* Glassmorphism card */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 30px;
+  border-radius: 18px;
+}
+
+/* Labels */
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-align: left;
+  color: #1f1f1f;
+}
+
+/* Inputs & Select */
+.form-container input,
+.form-container select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d6d6d6;
+  background: #acacac;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  color: #1f1f1f;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+  border-color: #2e8bff;
+  box-shadow: 0 0 8px rgba(46, 139, 255, 0.3);
+  outline: none;
+}
+
+/* Smooth animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

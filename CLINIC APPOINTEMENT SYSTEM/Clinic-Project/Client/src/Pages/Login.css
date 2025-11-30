@@ -81,23 +81,24 @@ input {
 
 }
 
-.google-btn-text{
-    padding:20px;
+.google-btn-text {
+    padding: 20px;
     font-size: 20px;
 }
+
 .google-btn {
     width: 100%;
     background-color: #ffffff;
     color: rgb(51, 50, 50);
     border: 1px solid black;
     padding: 5px;
-    border-radius: 10px;    
+    border-radius: 10px;
     font-size: 1rem;
     font-weight: 300;
     cursor: pointer;
     margin-top: 15px;
     transition: 0.3s ease;
-    text-align:center;
+    text-align: center;
 }
 
 /* Cookies */

@@ -1,4 +1,3 @@
-const SignUp = require("../Model/Users.Model")
 require("dotenv").config
 const jwt = require('jsonwebtoken')
 

@@ -1,6 +1,9 @@
 const mongoose = require("mongoose")
 
 const mySchema = new mongoose.Schema({
+    userId: {
+        type: String,
+    },
     patientName: {
         type: String,
     },
@@ -11,7 +14,7 @@ const mySchema = new mongoose.Schema({
         type: Number,
     },
     phone: {
-        type: String,
+        type: Number,
     },
     email: {
         type: String,
@@ -31,6 +34,6 @@ const mySchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-const Appointment = mongoose.model("Appointments", mySchema)
+const Appointment = mongoose.model("appointments", mySchema)
 
 module.exports = Appointment

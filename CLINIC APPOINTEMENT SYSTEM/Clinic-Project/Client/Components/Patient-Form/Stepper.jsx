@@ -6,6 +6,8 @@ import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const steps = ['Personal Details', 'Appointment Details'];
 
@@ -18,7 +20,8 @@ export default function HorizontalNonLinearStepper() {
   const isLastStep = () => activeStep === totalSteps() - 1;
   const allStepsCompleted = () => completedSteps() === totalSteps();
 
-  const handleNext = () => {
+  const userId = location.pathname.toString().split('/')[2]
+  const handleNext = async () => {
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
         ? steps.findIndex((step, i) => !(i in completed))
@@ -36,8 +39,10 @@ export default function HorizontalNonLinearStepper() {
         doctor: "",
         date: "",
         time: "",
-        disease:""
+        disease: ""
       })
+      const res = await axios.post(`http://localhost:8000/api/profile/${userId}/appointments`, { form }, { withCredentials: true });
+      console.log(res);
 
     }
   };
@@ -72,6 +77,35 @@ export default function HorizontalNonLinearStepper() {
     "Dr. Jane Smith",
     "Dr. Michael Watson",
   ];
+
+
+  const [appointmentsByDoctor, setAppointmentsByDoctor] = useState({
+    "Dr. John Doe": { dates: [], slots: [] },
+    "Dr. Jane Smith": { dates: [], slots: [] },
+    "Dr. Michael Lee": { dates: [], slots: [] }
+  });
+  useEffect(() => {
+    const getAppointmentsData = async () => {
+      const appointmentsData = await axios.get(`http://localhost:8000/api/profile/${userId}/appointments`, { withCredentials: true })
+      console.log(appointmentsData);
+      const temp = {
+        "Dr. John Doe": { dates: [], slots: [] },
+        "Dr. Jane Smith": { dates: [], slots: [] },
+        "Dr. Michael Lee": { dates: [], slots: [] }
+      };
+      appointmentsData.data.allAppointments.forEach(app => {
+        temp[app.doctor]?.dates.push(app.date);
+        temp[app.doctor]?.slots.push(app.time);
+      });
+      setAppointmentsByDoctor(temp);
+      console.log(appointmentsByDoctor);
+    }
+
+    getAppointmentsData()
+  }, [userId])
+
+  const selectedDoctor = form.doctor;
+
   function getNextWeekDates() {
     const dates = [];
     let current = new Date();
@@ -87,13 +121,13 @@ export default function HorizontalNonLinearStepper() {
       }
       current.setDate(current.getDate() + 1);
     }
-
     return dates;
   }
-  const weekDates = getNextWeekDates();
+  const weekDates = getNextWeekDates()
 
 
   const generateTimeSlots = () => {
+
     const slots = [];
     let start = 6; // 6 PM
     let end = 10; // 10 PM
@@ -105,9 +139,9 @@ export default function HorizontalNonLinearStepper() {
     return slots;
   };
 
-  const timeSlots = generateTimeSlots();
-
-
+  const timeSlots = generateTimeSlots().filter(
+    t => !appointmentsByDoctor[selectedDoctor]?.slots.includes(t)
+  );
   return (
     <Box sx={{ width: '50%', marginLeft: "30vh" }}>
       <Stepper nonLinear activeStep={activeStep} >
@@ -179,7 +213,7 @@ export default function HorizontalNonLinearStepper() {
                 </select>
 
                 <label>Any Disease Existed</label>
-                <input name="disease" value={form.disease} onChange={updateForm} required  placeholder='Mention Here..'/>
+                <input name="disease" value={form.disease} onChange={updateForm} required placeholder='Mention Here..' />
               </div>}
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                 <Button

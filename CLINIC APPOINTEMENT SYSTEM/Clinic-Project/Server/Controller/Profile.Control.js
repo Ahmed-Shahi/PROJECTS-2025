@@ -62,32 +62,62 @@ const handleGetDoctor = async (req, res) => {
 
 const handleBookBtn = async (req, res) => {
     try {
-        const {
-            patientName,
-            gender,
-            age,
-            phone,
-            email,
-            doctor,
-            date,
-            time,
-            disease } = await req.body
-    
+        const { form } = await req.body
+        const path = await req.path
+        const userId = path.split('/')[2]
+        console.log(form);
+
         Appointment.create({
-            patientName: patientName,
-            gender: gender,
-            age: age,
-            phone: phone,
-            email: email,
-            doctor: doctor,
-            date: date,
-            time: time,
-            disease: disease
+            userId: userId,
+            patientName: form.patientName,
+            gender: form.gender,
+            age: form.age,
+            phone: form.phone,
+            email: form.email,
+            doctor: form.doctor,
+            date: form.date,
+            time: form.time,
+            disease: form.disease
         })
+        console.log("Save in Database");
+
         res.send({ mes: "Appointment has been Book" })
-        
+
     } catch (error) {
         return res.json({ Message: "Server Error" })
+    }
+
+}
+
+const handleGetAllAppointments = async (req, res) => {
+    try {
+        const allAppointments = await Appointment.find({})
+        const drJohnDoe = await Appointment.find({ doctor: "Dr. John Doe" });
+        const drJohnDoetimes = drJohnDoe.map(app => app.time);
+        const drJohnDoedates = drJohnDoe.map(app => app.date);
+        console.log(drJohnDoetimes, drJohnDoedates);
+
+        const DrJaneSmith = await Appointment.find({ doctor: "Dr. Jane Smith" });
+        const drJaneSmithtimes = DrJaneSmith.map(app => app.time);
+        const drJaneSmithdates = DrJaneSmith.map(app => app.date);
+        console.log(drJaneSmithtimes, drJaneSmithdates);
+        
+        const DrMichaelWatson = await Appointment.find({ doctor: "Dr. Michael Watson" });
+        const drMichaelWatsontimes = DrMichaelWatson.map(app => app.time);
+        const drMichaelWatsondates = DrMichaelWatson.map(app => app.date);
+        console.log(drMichaelWatsontimes, drMichaelWatsondates);
+
+        return res.json({ 
+            allAppointments,
+            drJohnDoetimes,
+            drJohnDoedates,
+            drJaneSmithtimes,
+            drJaneSmithdates,
+            drMichaelWatsontimes,
+            drMichaelWatsondates
+         })
+    } catch (error) {
+        console.log(error.message);
     }
 
 }
@@ -96,5 +126,6 @@ module.exports = {
     handleLogoutBtn,
     handleGetAllDoctor,
     handleGetDoctor,
-    handleBookBtn
+    handleBookBtn,
+    handleGetAllAppointments
 }

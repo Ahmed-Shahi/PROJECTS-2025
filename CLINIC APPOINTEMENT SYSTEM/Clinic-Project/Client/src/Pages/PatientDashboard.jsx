@@ -11,6 +11,7 @@ const PatientDashboard = () => {
     const [userName, setUserName] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
     const [doctorData, setDoctorData] = useState()
+    const [allAppointments, setAllAppointments] = useState()
 
     useEffect(() => {
 
@@ -34,8 +35,20 @@ const PatientDashboard = () => {
                 setDoctorData(doctorData.data.allDoctors)
             }
         }
+        const getAppointmentData = async () => {
+            const appointmentsData = await axios.get(`http://localhost:8000/api/profile/${userId}/appointments`, { withCredentials: true })
+            const temp = [];
+            appointmentsData.data.allAppointments.forEach(element => {
+                if(element.userId === userId){
+                    temp.push(element)                    
+                    setAllAppointments(temp)
+                } 
+            })
+            console.log("Appointment:", allAppointments)
+        }
         getDoctorData()
         getUserData()
+        getAppointmentData()
     }, [setUserName])
 
 
@@ -98,18 +111,38 @@ const PatientDashboard = () => {
                                         <h3 className="doctor-name" style={{ color: '#0f87ff' }}>{doc.name}</h3>
                                         <p className="doctor-designation">{doc.designation}</p>
                                         <p className="doctor-specialty">{doc.specialty}</p>
-                                        <button className="details-btn" onClick={() => handleDetailsBtn(doc._id)}>View Details</button>
+                                        <button className="details-btn" onClick={() => handleDetailsBtn(doc._id)}>Book Appointment</button>
                                     </div>
                                 </div>
                             ))}
                         </div>
+                        {/* RIGHT SIDE - User Previous Appointments */}
+                        <div className="appointments-section">
+                            <h2>Your Appointments</h2>
+
+                            {allAppointments && allAppointments.length > 0 ? (
+                                <div className="appointments-list">
+                                    {allAppointments.map((apt, index) => (
+                                        <div key={index} className="appointment-card">
+                                            <p><strong>Patient:</strong> {apt.patientName}</p>
+                                            <p><strong>Doctor:</strong> {apt.doctor}</p>
+                                            <p><strong>Date:</strong> {apt.date}</p>
+                                            <p><strong>Time:</strong> {apt.time}</p>
+                                            <p><strong>Disease:</strong> {apt.disease}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p style={{ marginTop: "20px" }}>No appointments booked yet.</p>
+                            )}
+                        </div>
 
                         {/* Right Section - Chatbot */}
                         <aside className="chatbot-section">
-                            <h2>FAQ CHAT BOT</h2>
+                            <h2>AI HEALTH CARE</h2>
                             <div className="chat-box"></div>
                             <div className="chat-input">
-                                <input type="text" placeholder="Ask Question Here..." />
+                                <input type="text" placeholder="Describe symptoms here..." />
                                 <button>➤</button>
                             </div>
                         </aside>

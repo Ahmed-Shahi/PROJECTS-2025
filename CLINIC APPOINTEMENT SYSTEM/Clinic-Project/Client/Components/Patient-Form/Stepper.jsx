@@ -79,33 +79,36 @@ export default function HorizontalNonLinearStepper() {
   ];
 
 
+  
   const [appointmentsByDoctor, setAppointmentsByDoctor] = useState({
-    "Dr. John Doe": { dates: [], slots: [] },
-    "Dr. Jane Smith": { dates: [], slots: [] },
-    "Dr. Michael Lee": { dates: [], slots: [] }
+    "Dr. John Doe": { dates: {} },
+    "Dr. Jane Smith": { dates: {} },
+    "Dr. Michael Watson": { dates: {} }
   });
+  
   useEffect(() => {
     const getAppointmentsData = async () => {
       const appointmentsData = await axios.get(`http://localhost:8000/api/profile/${userId}/appointments`, { withCredentials: true })
       console.log(appointmentsData);
+  
       const temp = {
-        "Dr. John Doe": { dates: [], slots: [] },
-        "Dr. Jane Smith": { dates: [], slots: [] },
-        "Dr. Michael Lee": { dates: [], slots: [] }
+        "Dr. John Doe": { dates: {} },
+        "Dr. Jane Smith": { dates: {}},
+        "Dr. Michael Watson": { dates: {}}
       };
+      
       appointmentsData.data.allAppointments.forEach(app => {
-        temp[app.doctor]?.dates.push(app.date);
-        temp[app.doctor]?.slots.push(app.time);
+        temp[app.doctor].dates[app.date] = []
+        temp[app.doctor].dates[app.date].push(app.time);
       });
       setAppointmentsByDoctor(temp);
       console.log(appointmentsByDoctor);
     }
-
+    
     getAppointmentsData()
   }, [userId])
 
-  const selectedDoctor = form.doctor;
-
+  
   function getNextWeekDates() {
     const dates = [];
     let current = new Date();
@@ -124,7 +127,7 @@ export default function HorizontalNonLinearStepper() {
     return dates;
   }
   const weekDates = getNextWeekDates()
-
+  
 
   const generateTimeSlots = () => {
 
@@ -138,10 +141,15 @@ export default function HorizontalNonLinearStepper() {
     }
     return slots;
   };
+  
+  const selectedDoctor = form.doctor;
+  const selectedDate = form.date;
 
-  const timeSlots = generateTimeSlots().filter(
-    t => !appointmentsByDoctor[selectedDoctor]?.slots.includes(t)
-  );
+  
+  const timeSlots = selectedDoctor && selectedDate
+    ? generateTimeSlots().filter(slot => !(appointmentsByDoctor[selectedDoctor]?.dates[selectedDate] || []).includes(slot))
+    : generateTimeSlots();
+  
   return (
     <Box sx={{ width: '50%', marginLeft: "30vh" }}>
       <Stepper nonLinear activeStep={activeStep} >

@@ -72,12 +72,38 @@ html,
 
 /* Main Layout */
 .dashboard-main {
-    display: flex;
+    display: flex; 
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
     /* gap: 50px; */
     width: 100%;
+}
+.dashboard-main {
+    display: flex;
+    width: 100%;
+    height: 100vh;              /* Full screen height */
+    overflow: hidden;           /* Prevent outside overflow */
+}
+
+/* Make doctor list a scrollable left panel */
+.doctors-container {
+    width: 350px;               /* Fixed width sidebar */
+    height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;     /* STACK vertically */
+    border-right: 2px solid #ddd;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    /* padding: 20px; */
+}
+
+/* Ensure cards align vertically */
+.doctor-card {
+    width: 300px;
+    flex-shrink: 0;
 }
 
 
@@ -271,4 +297,45 @@ html,
     background: #084c8c;
     transform: scale(1.05);
     box-shadow: 0 3px 10px rgba(0, 89, 179, 0.3);
+}
+
+.appointments-section {
+    overflow-y: scroll;
+    flex: 1;
+    height: 60vh;
+    padding: 20px;
+    margin-left: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    max-width: 70vh;
+    color: #000000;
+}
+
+.appointments-section h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    color: #005cfb;
+    border-bottom: 3px solid #0084ff;
+    padding-bottom: 8px;
+    width: fit-content;
+}
+
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.appointment-card {
+    background: #f5f9ff;
+    border-left: 5px solid #0f87ff;
+    padding: 12px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.appointment-card:hover {
+    background: #eaf3ff;
+    transform: scale(1.02);
 }

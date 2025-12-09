@@ -97,7 +97,7 @@ html,
     flex-direction: column;     /* STACK vertically */
     border-right: 2px solid #ddd;
     grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-    /* padding: 20px; */
+    margin-top: -68px;
 }
 
 /* Ensure cards align vertically */
@@ -129,7 +129,7 @@ html,
     background: #f9fcff;
     border: 1px solid #d3e4f7;
     border-radius: 8px;
-    padding: 10px 15px;
+    padding: 10px 10px;
     margin-bottom: 15px;
     transition: transform 0.2s ease;
 }

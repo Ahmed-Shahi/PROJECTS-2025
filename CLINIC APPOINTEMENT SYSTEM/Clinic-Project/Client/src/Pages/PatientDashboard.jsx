@@ -12,6 +12,7 @@ const PatientDashboard = () => {
     const [errorMessage, setErrorMessage] = useState('')
     const [doctorData, setDoctorData] = useState()
     const [allAppointments, setAllAppointments] = useState()
+    const [message, setMessage] = useState('')
 
     useEffect(() => {
 
@@ -82,6 +83,14 @@ const PatientDashboard = () => {
         navigate('/login')
     }
 
+    const handleSendMessage = async () => {
+        console.log("Message Sent:", message);
+        const response = await axios.post(`http://localhost:8000/api/bot`, {message: message}, {
+            withCredentials: true
+        });
+        console.log("Response from bot:", response.data);
+    }
+
     return (
         <div className="dashboard">
             {userName ?
@@ -142,12 +151,15 @@ const PatientDashboard = () => {
                             <h2>AI HEALTH CARE</h2>
                             <div className="chat-box"></div>
                             <div className="chat-input">
-                                <input type="text" placeholder="Describe symptoms here..." />
-                                <button>➤</button>
+                                <input 
+                                type="text"
+                                placeholder="Describe symptoms here..."
+                                value={message}
+                                onChange={(e)=>setMessage(e.target.value)} />
+                                <button onClick={handleSendMessage}>➤</button>
                             </div>
                         </aside>
                     </main>
-                    {/* <button className="appointment-btn">Get Appointment</button> */}
                 </>
                 :
                 <div>

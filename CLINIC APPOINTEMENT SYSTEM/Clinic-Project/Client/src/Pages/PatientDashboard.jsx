@@ -13,7 +13,7 @@ const PatientDashboard = () => {
     const [doctorData, setDoctorData] = useState()
     const [allAppointments, setAllAppointments] = useState()
     const [message, setMessage] = useState('')
-
+    const [reply, setReply] = useState('')
     useEffect(() => {
 
         console.log(userId);
@@ -83,12 +83,17 @@ const PatientDashboard = () => {
         navigate('/login')
     }
 
+    const chat = [];
+
     const handleSendMessage = async () => {
         console.log("Message Sent:", message);
         const response = await axios.post(`http://localhost:8000/api/bot`, {message: message}, {
             withCredentials: true
         });
         console.log("Response from bot:", response.data);
+        setReply(response.data)
+        chat.push({message: message,reply: reply})
+        console.log(chat);
     }
 
     return (
